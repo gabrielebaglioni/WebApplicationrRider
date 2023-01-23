@@ -10,6 +10,8 @@ namespace WebApplicationrRider.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class apiController : ControllerBase
+    
+    
     {
     }
 }
