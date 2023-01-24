@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationrRider.Models;
@@ -37,44 +32,61 @@ namespace WebApplicationrRider.Controllers
             {
                 return NotFound();
             }
-            var Film = await _dbContext.Films.FindAsync(id);
+            var film = await _dbContext.Films.FindAsync(id);
 
-            if (Film == null)
+            if (film == null)
             {
                 return NotFound();
             }
 
-            return Film;
+            return film;
         }
         //POST: api/Films
         [HttpPost]
 
-        public async Task<ActionResult<Film>> PostFilm(Film film)
+        public async Task<ActionResult<Film>> PostFilm(/*[FromBody]*/ Film film)
         {
+            var checkFilmGenreExist = _dbContext.Genres.Any(genre => genre.Name.Equals(film.GenreName));
+            var checkFilmTitleExist = _dbContext.Films.Any(film => film.Title.Equals(film.Title));
+
+            if (!checkFilmGenreExist || !checkFilmTitleExist)
+            {
+                return BadRequest(OperationResult.NOK("Genere Inesistente o Titolo del film gia in uso"));
+            }
+            //inserire altri controlli
             _dbContext.Films.Add(film);
             await _dbContext.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetMovieById), new { id = film.Id }, film);
+            return CreatedAtAction(nameof(GetAllFilms), new { id = film.Id }, film);
         }
+        
         //PUT:api/Films/3
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFilm(int id, Film film)
         {
-            if (id != film.Id)
+            var checkFilmGenreExist = _dbContext.Genres.Any(genre => genre.Name.Equals(film.GenreName));
+            var checkFilmTitleExist = _dbContext.Films.Any(film => film.Title.Equals(film.Title));
+            if (id != film.Id )
             {
-                return BadRequest();
+                return NotFound(OperationResult.NOK("id diverso"));
             }
-
             _dbContext.Entry(film).State = EntityState.Modified;
-
             try
             {
-                await _dbContext.SaveChangesAsync();
+                if(checkFilmGenreExist || checkFilmTitleExist)
+                {
+                    await _dbContext.SaveChangesAsync();
+                }
+                else
+                {
+                    return BadRequest(OperationResult.NOK("Il genre non esiste"));
+                }
+                
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!FilmExist(id))
+                if (!FilmExist(id) )
                 {
-                    return NotFound();
+                    return NotFound(OperationResult.NOK("Id inesistente"));
                 }
                 else
                 {
