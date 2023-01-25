@@ -18,7 +18,7 @@ namespace WebApplicationrRider.Controllers
         //GET: api/Genres
         [HttpGet]
 
-        public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
+        public async Task<ActionResult<IEnumerable<Genre>>> GetAllGenres()
         {
             if (_dbContext.Genres == null)
             {
@@ -28,50 +28,61 @@ namespace WebApplicationrRider.Controllers
         }
 
         //GET: api/Genres/5
-        [HttpGet("{id}")]
-
-        public async Task<ActionResult<Genre>> GetGenre(int id)
-        {
-            if (_dbContext.Genres == null)
-            {
-                return NotFound();
-            }
-            var genre = await _dbContext.Genres.FindAsync(id)
-;
-
-            if (genre == null)
-            {
-                return NotFound();
-            }
-            return genre;
-        }
+        // [HttpGet("{GenreId}")]
+        //
+        // public async Task<ActionResult<List<Film>>> GetFilmByGenre(int GenreId)
+        // {
+        //     if (_dbContext.Genres == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //
+        //     var filmsByGenre = await _dbContext.Films
+        //         .Where(x => x.GenreId == GenreId)
+        //         .ToListAsync();
+        //
+        //     return filmsByGenre;
+        // }
 
         //POST: api/Genres
-        [HttpPost]
-
-        public async Task<ActionResult<Genre>> PostGenre(Genre genre)
-        {
-            _dbContext.Genres.Add(genre);
-            await _dbContext.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetGenre), new { id = genre.GenreId }, genre);
-        }
-
-        //PUT: api/Genres/5
+         [HttpPost]
+         public async Task<ActionResult<List<Genre>>> PostGenre(CreateGenreDto request)
+         {
+             var newGenre = new Genre
+             {
+                 Name = request.Name
+             };
+             _dbContext.Genres.Add(newGenre);
+             await _dbContext.SaveChangesAsync();
+        
+             return CreatedAtAction(nameof(GetAllGenres), new { id = newGenre.Id }, newGenre);
+         }
+        
+        // //PUT: api/Genres/5
         [HttpPut("{id}")]
-
-        public async Task<IActionResult> PutGenre(int id, Genre genre)
+        
+        public async Task<IActionResult> PutGenre(int id, CreateGenreDto request)
         {
-            if (id != genre.GenreId)
+           
+           
+            var checkGenreNameExist = _dbContext.Genres.Any(genre => genre.Name.Equals(genre.Name));
+            var newGenre = new Genre
             {
-                return BadRequest();
-            }
-
-            _dbContext.Entry(genre).State = EntityState.Modified;
-
+                Name = request.Name
+            };
+           
+            _dbContext.Entry(request).State = EntityState.Modified;
+            
             try
             {
-                await _dbContext.SaveChangesAsync();
+                if(checkGenreNameExist)
+                {
+                    await _dbContext.SaveChangesAsync();
+                }
+                else
+                {
+                    return BadRequest(OperationResult.NOK("Il genre già esiste"));
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -86,32 +97,32 @@ namespace WebApplicationrRider.Controllers
             }
             return NoContent();
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGenre(int id)
-        {
-            if (_dbContext == null)
-            {
-                return NotFound();
-            }
-
-            var genre = await _dbContext.Genres.FindAsync(id);
-            if (genre == null)
-            {
-                return NotFound();
-            }
-
-            _dbContext.Genres.Remove(genre);
-            await _dbContext.SaveChangesAsync();
-            return NoContent();
-        }
-        private bool FilmExist(long id)
-        {
-            return (_dbContext.Films?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        // [HttpDelete("{id}")]
+        // public async Task<IActionResult> DeleteGenre(int id)
+        // {
+        //     if (_dbContext == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //
+        //     var genre = await _dbContext.Genres.FindAsync(id);
+        //     if (genre == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //
+        //     _dbContext.Genres.Remove(genre);
+        //     await _dbContext.SaveChangesAsync();
+        //     return NoContent();
+        // }
+        // private bool FilmExist(long id)
+        // {
+        //     return (_dbContext.Films?.Any(e => e.Id == id)).GetValueOrDefault();
+        // }
 
         private bool GenreExists(long id)
         {
-            return (_dbContext.Genres?.Any(e => e.GenreId == id)).GetValueOrDefault();
+            return (_dbContext.Genres?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
