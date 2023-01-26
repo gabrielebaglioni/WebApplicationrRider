@@ -8,7 +8,7 @@ public class FilmProfile : Profile
 {
     public FilmProfile()
     {
-        CreateMap<FilmForCreationDTO, Film>()
+        CreateMap<FilmSaveDTO, Film>()
             .ForMember(
                 dest => dest.Id,
                 opt => opt.MapFrom(src => src.Id))
@@ -18,7 +18,6 @@ public class FilmProfile : Profile
             .ForMember(
                 dest => dest.GenreName,
                 opt => opt.MapFrom(src => src.GenreName))
-
             .ForMember(
                 dest => dest.ReleaseDate,
                 opt => opt.MapFrom(src => src.ReleaseDate))
