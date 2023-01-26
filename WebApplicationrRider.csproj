@@ -30,12 +30,4 @@
         </EmbeddedResource>
     </ItemGroup>
 
-    <ItemGroup>
-        <Compile Update="Ignore\Comment.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>Comment.txt</DependentUpon>
-        </Compile>
-    </ItemGroup>
-
 </Project>

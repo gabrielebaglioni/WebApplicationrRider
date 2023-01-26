@@ -6,7 +6,7 @@ public class FilmForOutputDTO
 
     public string? Title { get; set; }
 
-    public string GenreName { get; set; }
+    public string  GenreName { get; set; }
 
     public DateTime ReleaseDate { get; set; }
     
@@ -20,8 +20,8 @@ public class FilmForOutputDTO
         {
             Id = entity.Id,
             Title = entity.Title,
-            ReleaseDate = entity.ReleaseDate
-            //Genre = entity.Genre == null ? null : (GenreDTO)entity.Genre
+            ReleaseDate = entity.ReleaseDate,
+            GenreName = entity.Genre?.Name ?? String.Empty
         };
     }
 }

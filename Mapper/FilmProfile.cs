@@ -15,9 +15,9 @@ public class FilmProfile : Profile
             .ForMember(
                 dest => dest.Title,
                 opt => opt.MapFrom(src => src.Title))
-            .ForMember(
-                dest => dest.GenreName,
-                opt => opt.MapFrom(src => src.GenreName))
+            // .ForMember(
+            //     dest => dest.Genre.Name,
+            //     opt => opt.MapFrom(src => src.GenreName))
             .ForMember(
                 dest => dest.ReleaseDate,
                 opt => opt.MapFrom(src => src.ReleaseDate))
@@ -40,7 +40,7 @@ public class FilmProfile : Profile
                 opt => opt.MapFrom(x => x.Title))
             .ForMember(
                 dest => dest.GenreName,
-                opt => opt.MapFrom(x => x.GenreName))
+                opt => opt.MapFrom(x => x.Genre.Name))
             .ForMember(
                 dest => dest.ReleaseDate,
                 opt => opt.MapFrom(x => x.ReleaseDate));

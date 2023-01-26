@@ -24,6 +24,7 @@ public class FilmSaveDTO
 
     
 
+    
     public class DateLessThanOrEqualToToday : ValidationAttribute
     {
         public override string FormatErrorMessage(string name)
@@ -38,6 +39,14 @@ public class FilmSaveDTO
             if (dateValue.Date > DateTime.Now.Date)
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
             return ValidationResult.Success;
+        }
+    }
+
+    public class MapProfile : AutoMapper.Profile
+    {
+        public MapProfile()
+        {
+            CreateMap<Film, FilmSaveDTO>();
         }
     }
 }

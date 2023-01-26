@@ -31,6 +31,9 @@ public class GenreProfile : Profile
                 opt => opt.MapFrom(x => x.Id))
             .ForMember(
                 dest => dest.Name,
-                opt => opt.MapFrom(x => x.Name));
+                opt => opt.MapFrom(x => x.Name))
+            .ForMember(
+                dest => dest.Films,
+                opt => opt.MapFrom(x => x.Films));
     }
 }

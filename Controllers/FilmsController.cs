@@ -27,10 +27,10 @@ public class FilmsController : ControllerBase
         if (!_dbContext.Films.Any())
             return NotFound();
 
-        var allFilms = _dbContext.Films.ToList();
-        var _films = _mapper.Map<IEnumerable<FilmForOutputDTO>>(allFilms);
-        // var _films = allFilms.Select(f => (FilmForOutputDTO)f);
-        return Ok(_films);
+        var allFilms = _dbContext.Films.Include("Genre").ToList();
+        //var _filmsDtos = _mapper.Map<IEnumerable<FilmForOutputDTO>>(allFilms);
+        var _filmsDtos = allFilms.Select(f => (FilmForOutputDTO)f);
+        return Ok(_filmsDtos);
     }
 
     //GET: api/Films/2
@@ -38,36 +38,42 @@ public class FilmsController : ControllerBase
     public ActionResult<FilmForOutputDTO> GetMovieById(int id)
     {
         var film = _dbContext.Films
-            //.Include(x =>x.Genre)
+            .Include("Genre")
             .FirstOrDefault(x => x.Id == id);
         if (film == null)
             return NotFound();
 
-        var _film = _mapper.Map<FilmForOutputDTO>(film);
+        var _filmsDtos = _mapper.Map<FilmForOutputDTO>(film);
+       
 
 
-        return Ok(_film);
+        return Ok(_filmsDtos);
     }
 
     //POST: api/Films
     [HttpPost]
     public async Task<ActionResult<FilmForOutputDTO>> PostFilm( /*[FromBody]*/ FilmSaveDTO data)
     {
-        //var checkFilmGenreExist = _dbContext.Genres.Any(genre => genre.Id.Equals(film.GenreId));
-        //var checkFilmTitleExist = _dbContext.Films.Any(film => film.Title.Equals(film.Title));
-        var check = _dbContext.Genres.Any(genres => genres.Name.Equals(data.GenreName));
+        // var checkFilmGenreExist = _dbContext.Genres.Any(genre => genre.Id.Equals(data.Id));
+        // var checkFilmTitleExist = _dbContext.Films.Any(film => film.Title.Equals(data.Title));
+        //var check = _dbContext.Genres.Any(genres => genres.Name.Equals(data.GenreName));
 
-        // if (/*!checkFilmGenreExist ||*/ !checkFilmTitleExist)
+        // if (!checkFilmGenreExist || checkFilmTitleExist)
         // {
         //     return BadRequest(OperationResult.NOK("Genere Inesistente o Titolo del film gia in uso"));
         // }
-        if ( /*!checkFilmGenreExist ||*/ !check) return BadRequest(OperationResult.NOK("Genere Inesistente"));
 
-        var film = _mapper.Map<Film>(data);
-        _dbContext.Films.Add(film);
-        var newFilm = _mapper.Map<FilmForOutputDTO>(film);
+        // var film = _mapper.Map<Film>(data);
+        // _dbContext.Films.Add(film);
+        // var film = _dbContext.Films.Include("Genre").FirstOrDefaultAsync();
+        // var newFilm = _mapper.Map<FilmForOutputDTO>(film);
+        // await _dbContext.SaveChangesAsync();
+        // return CreatedAtAction(nameof(GetAllFilms), new { id = film.Id }, newFilm);
+        var newFilm = _mapper.Map<Film>(data);
+        // var newFilm = _dbContext.Films.Include("Genre");
+        _dbContext.Films.Add(newFilm);
         await _dbContext.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetAllFilms), new { id = film.Id }, newFilm);
+        return Ok(new FilmForOutputDTO());
     }
 
     // //PUT:api/Films/3
