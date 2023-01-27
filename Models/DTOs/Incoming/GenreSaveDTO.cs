@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApplicationrRider.Models;
+namespace WebApplicationrRider.Models.DTOs.Incoming;
 
-public class GenreOutputDTO
+public class GenreSaveDto
 {
     [Required] [Key] public int Id { get; set; }
 
@@ -10,9 +10,9 @@ public class GenreOutputDTO
     [StringLength(40)]
     public string? Name { get; set; }
 
-    public static explicit operator GenreOutputDTO(Genre entity)
+    public static explicit operator GenreSaveDto(Genre entity)
     {
-        return new GenreOutputDTO
+        return new GenreSaveDto
         {
             Id = entity.Id,
             Name = entity.Name

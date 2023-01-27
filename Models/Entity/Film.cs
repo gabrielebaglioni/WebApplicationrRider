@@ -1,23 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace WebApplicationrRider.Models;
+﻿namespace WebApplicationrRider.Models.Entity;
 
 public class Film
 {
     // [Key] 
     public int Id { get; set; }
 
-    public string Title { get; set; }
+    public string? Title { get; set; }
     
     public DateTime ReleaseDate { get; set; }
+    
+    
 
-    //relation whit Genre
-     public int FK_Genre { get; set; }
-
-    //[System.Text.Json.Serialization.JsonIgnore]
-    //[ForeignKey("FK_Genre")]
+    //relation with Genre one-to-many
+     public int FkGenre { get; set; }
+     //[ForeignKey("FK_Genre")]
     public Genre? Genre { get; set; }
+    
+    //relation with EaringSale one-to-one
+    public EarningSale EarningSale { get; set; }
+    
+    
 
     public DateTime DateAdded { get; set; }
 

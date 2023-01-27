@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebApplicationrRider.Models.Entity;
 
-namespace WebApplicationrRider.Models;
+namespace WebApplicationrRider.Models.DTOs.Incoming;
 
-public class FilmSaveDTO
+public class FilmSaveDto
 {
     [Required] [Key] public int Id { get; set; }
 
@@ -12,29 +13,36 @@ public class FilmSaveDTO
 
     [Required(ErrorMessage = "You have to insert the title")]
     [StringLength(40)]
-    public string GenreName { get; set; }
+    public string? GenreName { get; set; }
 
     [Required]
     [Display(Name = "Release Date")]
     [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
     [DataType(DataType.Date, ErrorMessage = "Invalid date format")]
     [DateLessThanOrEqualToToday]
+    
+    public int PriceSingleSale { get; set; }
+    
+    public int SaleAmount { get; set; }
+    
+    public int TotalEaring { get; set; }
     public DateTime ReleaseDate { get; set; }
-    //public GenreDTO? Genre { get; set; }
 
-    public static explicit operator FilmSaveDTO(Film film)
+    
+
+    public static explicit operator FilmSaveDto(Film entity)
     {
-        return new FilmSaveDTO
+        return new FilmSaveDto
         {
-            Id = film.Id,
-            Title = film.Title,
-            GenreName = film.Genre.Name,
-            ReleaseDate = film.ReleaseDate
+            Id = entity.Id,
+            Title = entity.Title,
+            GenreName = entity.Genre?.Name,
+            ReleaseDate = entity.ReleaseDate,
+            PriceSingleSale = entity.EarningSale.PriceSingleSale,
+            SaleAmount = entity.EarningSale.SaleAmount,
+            TotalEaring = entity.EarningSale.PriceSingleSale * entity.EarningSale.SaleAmount
         };
     }
-    
-    
-
     
     public class DateLessThanOrEqualToToday : ValidationAttribute
     {
@@ -43,7 +51,7 @@ public class FilmSaveDTO
             return "Date value should not be a future date";
         }
 
-        protected override ValidationResult IsValid(object objValue, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(object? objValue, ValidationContext validationContext)
         {
             var dateValue = objValue as DateTime? ?? new DateTime();
 

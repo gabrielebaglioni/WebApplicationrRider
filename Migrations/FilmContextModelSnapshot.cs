@@ -22,7 +22,7 @@ namespace WebApplicationrRider.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("WebApplicationrRider.Models.Film", b =>
+            modelBuilder.Entity("WebApplicationrRider.Models.Entity.EarningSale", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -39,22 +39,56 @@ namespace WebApplicationrRider.Migrations
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("FK_Genre")
+                    b.Property<int>("FkFilm")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PriceSingleSale")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SaleAmount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FkFilm")
+                        .IsUnique();
+
+                    b.ToTable("EarningSales");
+                });
+
+            modelBuilder.Entity("WebApplicationrRider.Models.Entity.Film", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateDelete")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FkGenre")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FK_Genre");
+                    b.HasIndex("FkGenre");
 
                     b.HasIndex("Title")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Title] IS NOT NULL");
 
                     b.ToTable("Films");
                 });
@@ -77,26 +111,43 @@ namespace WebApplicationrRider.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
 
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("WebApplicationrRider.Models.Film", b =>
+            modelBuilder.Entity("WebApplicationrRider.Models.Entity.EarningSale", b =>
+                {
+                    b.HasOne("WebApplicationrRider.Models.Entity.Film", "Film")
+                        .WithOne("EarningSale")
+                        .HasForeignKey("WebApplicationrRider.Models.Entity.EarningSale", "FkFilm")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+                });
+
+            modelBuilder.Entity("WebApplicationrRider.Models.Entity.Film", b =>
                 {
                     b.HasOne("WebApplicationrRider.Models.Genre", "Genre")
                         .WithMany("Films")
-                        .HasForeignKey("FK_Genre")
+                        .HasForeignKey("FkGenre")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("WebApplicationrRider.Models.Entity.Film", b =>
+                {
+                    b.Navigation("EarningSale")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebApplicationrRider.Models.Genre", b =>

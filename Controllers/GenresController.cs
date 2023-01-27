@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationrRider.Models;
+using WebApplicationrRider.Models.DTOs.Incoming;
 using WebApplicationrRider.Models.DTOs.Outgoing;
-using GenreOutputDTO = WebApplicationrRider.Models.GenreOutputDTO;
 
 namespace WebApplicationrRider.Controllers;
 
@@ -20,10 +20,10 @@ public class GenresController : ControllerBase
 
     //GET: api/Genres
     [HttpGet]
-    public ActionResult<IEnumerable<GenreOutputDTO>> GetAllGenres()
+    public ActionResult<IEnumerable<GenreSaveDto>> GetAllGenres()
     {
         var allGenre = _dbContext.Genres.ToList();
-        var genreOutput = allGenre.Select(g => (GenreOutputDTO)g);
+        var genreOutput = allGenre.Select(g => (GenreSaveDto)g);
         return Ok(genreOutput);
     }
 
@@ -32,20 +32,20 @@ public class GenresController : ControllerBase
     //GET: api/Genres/5
     //GET A SINGLE GENRE BY ID
     [HttpGet("{id}")]
-    public ActionResult<GenreOutputDTO> GetGenreById(int id)
+    public ActionResult<GenreSaveDto> GetGenreById(int id)
     {
         var genre = _dbContext.Genres
             .FirstOrDefault(x => x.Id == id);
         if (genre == null)
             return NotFound();
 
-        var output = (GenreOutputDTO)genre;
+        var output = (GenreSaveDto)genre;
         return Ok(output);
     }
 
     //POST: api/Genres
     [HttpPost]
-    public async Task<ActionResult<List<FilmForOutputDTO>>> PostGenre(GenreOutputDTO userData)
+    public async Task<ActionResult<List<FilmOutputDto>>> PostGenre(GenreSaveDto userData)
     {
         var genre = _dbContext.Genres.Any(genres => genres.Name.Equals(userData.Name));
         if (genre)
@@ -57,13 +57,13 @@ public class GenresController : ControllerBase
         };
         _dbContext.Add(newGenre);
         await _dbContext.SaveChangesAsync();
-        var output = (GenreOutputDTO)newGenre;
+        var output = (GenreSaveDto)newGenre;
         return Ok(output);
     }
 
     // //PUT: api/Genres/5
     [HttpPut("{id}")]
-    public async Task<ActionResult<GenreOutputDTO>> PutGenre(int id, GenreOutputDTO userData)
+    public async Task<ActionResult<GenreSaveDto>> PutGenre(int id, GenreSaveDto userData)
     {
         var genre = await _dbContext.Genres.FindAsync(id);
         var checkGenreName = _dbContext.Genres.Any(g => g.Name.Equals(userData.Name));
@@ -79,7 +79,7 @@ public class GenresController : ControllerBase
         await _dbContext.SaveChangesAsync();
 
 
-        var newGenre = new GenreOutputDTO
+        var newGenre = new GenreSaveDto
         {
             Id = userData.Id,
             Name = userData.Name
