@@ -10,14 +10,13 @@ namespace WebApplicationrRider.Controllers;
 [ApiController]
 public class FilmsController : ControllerBase
 {
-    private static List<Film> films = new();
     private readonly FilmContext _dbContext;
-    private readonly IMapper _mapper;
+    
 
-    public FilmsController(FilmContext dbContext, IMapper mapper)
+    public FilmsController(FilmContext dbContext)
     {
         _dbContext = dbContext;
-        _mapper = mapper;
+        
     }
 
     // GET: api/Films
@@ -28,7 +27,6 @@ public class FilmsController : ControllerBase
             return NotFound();
 
         var allFilms = _dbContext.Films.Include("Genre").ToList();
-        //var _filmsDtos = _mapper.Map<IEnumerable<FilmForOutputDTO>>(allFilms);
         var _filmsDtos = allFilms.Select(f => (FilmForOutputDTO)f);
         return Ok(_filmsDtos);
     }
@@ -43,7 +41,7 @@ public class FilmsController : ControllerBase
         if (film == null)
             return NotFound();
 
-        var _filmsDtos = _mapper.Map<FilmForOutputDTO>(film);
+        var _filmsDtos = (FilmForOutputDTO?)film;
        
 
 
@@ -52,57 +50,70 @@ public class FilmsController : ControllerBase
 
     //POST: api/Films
     [HttpPost]
-    public async Task<ActionResult<FilmForOutputDTO>> PostFilm( /*[FromBody]*/ FilmSaveDTO data)
+    public async Task<ActionResult<FilmForOutputDTO>> CreateFilm(FilmSaveDTO UserData)
     {
-        // var checkFilmGenreExist = _dbContext.Genres.Any(genre => genre.Id.Equals(data.Id));
-        // var checkFilmTitleExist = _dbContext.Films.Any(film => film.Title.Equals(data.Title));
-        //var check = _dbContext.Genres.Any(genres => genres.Name.Equals(data.GenreName));
+        var genre = await _dbContext.Genres.FirstOrDefaultAsync(g => g.Name == UserData.GenreName);
 
-        // if (!checkFilmGenreExist || checkFilmTitleExist)
-        // {
-        //     return BadRequest(OperationResult.NOK("Genere Inesistente o Titolo del film gia in uso"));
-        // }
+        if (genre == null)
+        {
+            return BadRequest("Invalid genre name");
+        }
 
-        // var film = _mapper.Map<Film>(data);
-        // _dbContext.Films.Add(film);
-        // var film = _dbContext.Films.Include("Genre").FirstOrDefaultAsync();
-        // var newFilm = _mapper.Map<FilmForOutputDTO>(film);
-        // await _dbContext.SaveChangesAsync();
-        // return CreatedAtAction(nameof(GetAllFilms), new { id = film.Id }, newFilm);
-        var newFilm = _mapper.Map<Film>(data);
-        // var newFilm = _dbContext.Films.Include("Genre");
-        _dbContext.Films.Add(newFilm);
+        var newFilm = new Film
+        {
+            Id = UserData.Id,
+            Title = UserData.Title,
+            ReleaseDate = UserData.ReleaseDate,
+            Genre = genre
+        };
+
+        _dbContext.Add(newFilm);
         await _dbContext.SaveChangesAsync();
-        return Ok(new FilmForOutputDTO());
+
+        var output = (FilmForOutputDTO)newFilm;
+        return Ok(output);
     }
+
+
 
     // //PUT:api/Films/3
     [HttpPut("{id}")]
-    public async Task<ActionResult<FilmForOutputDTO>> PutFilm(int id, FilmSaveDTO data)
+    public async Task<IActionResult> UpdateFilm(int id, [FromBody] FilmSaveDTO userData)
     {
-        // var checkFilmGenreExist = _dbContext.Genres.Any(genre => genre.Id.Equals(film.GenreId));
-        var checkFilmTitleExist = _dbContext.Films.Any(film => film.Title.Equals(film.Title));
+        var film = await _dbContext.Films.FindAsync(id);
+        if (film == null)
+            return NotFound();
 
-        var _film = _mapper.Map<Film>(data);
-        //var UpdatedFilm = _mapper.Map<FilmForOutputDTO>(_film);
+        film.Title = userData.Title;
+        film.ReleaseDate = userData.ReleaseDate;
 
-        if (id != data.Id) return NotFound(OperationResult.NOK("id diverso"));
-        _dbContext.Entry(_film).State = EntityState.Modified;
-        try
+        // controllo il valore del GenreName
+        if (userData.GenreName != film.Genre?.Name)
         {
-            if ( /*checkFilmGenreExist ||*/ checkFilmTitleExist)
-                await _dbContext.SaveChangesAsync();
-            else
-                return BadRequest(OperationResult.NOK("Il genre non esiste"));
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!FilmExist(id))
-                return NotFound(OperationResult.NOK("Id inesistente"));
-            throw;
+            // cerco il genere nel db
+            var genre = await _dbContext.Genres.FirstOrDefaultAsync(g => g.Name == userData.GenreName);
+
+            // se non esiste lo creo
+            if (genre == null)
+            {
+                genre = new Genre { Name = userData.GenreName };
+                _dbContext.Genres.Add(genre);
+            }
+
+            film.Genre = genre;
         }
 
-        return NoContent();
+        await _dbContext.SaveChangesAsync();
+
+        var filmForOutputDTO = new FilmForOutputDTO
+        {
+            Id = film.Id,
+            Title = film.Title,
+            ReleaseDate = film.ReleaseDate,
+            GenreName = film.Genre?.Name ?? string.Empty
+        };
+
+        return Ok(filmForOutputDTO);
     }
 
     // //DELETE: api/Films/2
@@ -118,9 +129,5 @@ public class FilmsController : ControllerBase
         await _dbContext.SaveChangesAsync();
         return NoContent();
     }
-
-    private bool FilmExist(long id)
-    {
-        return (_dbContext.Films?.Any(e => e.Id == id)).GetValueOrDefault();
-    }
+    
 }

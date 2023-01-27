@@ -24,4 +24,6 @@ public class Film
     public DateTime DateUpdated { get; set; }
 
     public DateTime DateDelete { get; set; }
+
+   
 }

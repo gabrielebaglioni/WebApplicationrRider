@@ -8,6 +8,13 @@ public class GenreOutputDTO
     
     public  List<Film> Films { get; set; }
     
-    
+    public static explicit operator GenreOutputDTO(Genre entity)
+    {
+        return new GenreOutputDTO
+        {
+            Id = entity.Id,
+            Name = entity.Name
+        };
+    }
     
 }

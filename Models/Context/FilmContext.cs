@@ -18,12 +18,6 @@ public class FilmContext : DbContext
     {
         base.OnModelCreating(builder);
         
-        // builder.Entity<Film>()
-        //     .HasOne(f => f.Genre)
-        //     .WithMany(g => g.Films)
-        //     .HasForeignKey(f => f.FK_Genre);
-        //
-        // builder.Entity<Film>().HasIndex(u => u.Title).IsUnique();
         builder.Entity<Film>(entityBuilder =>
         {
             entityBuilder.HasKey(x => x.Id);

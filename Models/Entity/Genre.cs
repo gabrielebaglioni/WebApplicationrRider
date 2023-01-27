@@ -11,6 +11,7 @@ public class Genre
 
     //[System.Text.Json.Serialization.JsonIgnore]
     public  List<Film> Films { get; set; }
+    
     public DateTime DateAdded { get; set; }
 
     public DateTime DateUpdated { get; set; }

@@ -22,6 +22,17 @@ public class FilmSaveDTO
     public DateTime ReleaseDate { get; set; }
     //public GenreDTO? Genre { get; set; }
 
+    public static explicit operator FilmSaveDTO(Film film)
+    {
+        return new FilmSaveDTO
+        {
+            Id = film.Id,
+            Title = film.Title,
+            GenreName = film.Genre.Name,
+            ReleaseDate = film.ReleaseDate
+        };
+    }
+    
     
 
     
@@ -39,14 +50,6 @@ public class FilmSaveDTO
             if (dateValue.Date > DateTime.Now.Date)
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
             return ValidationResult.Success;
-        }
-    }
-
-    public class MapProfile : AutoMapper.Profile
-    {
-        public MapProfile()
-        {
-            CreateMap<Film, FilmSaveDTO>();
         }
     }
 }

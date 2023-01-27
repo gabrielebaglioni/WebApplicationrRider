@@ -2,7 +2,7 @@
 
 namespace WebApplicationrRider.Models;
 
-public class GenreSaveDTO
+public class GenreOutputDTO
 {
     [Required] [Key] public int Id { get; set; }
 
@@ -10,9 +10,9 @@ public class GenreSaveDTO
     [StringLength(40)]
     public string? Name { get; set; }
 
-    public static explicit operator GenreSaveDTO(Genre entity)
+    public static explicit operator GenreOutputDTO(Genre entity)
     {
-        return new GenreSaveDTO
+        return new GenreOutputDTO
         {
             Id = entity.Id,
             Name = entity.Name
