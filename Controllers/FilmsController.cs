@@ -1,4 +1,4 @@
-using AutoMapper;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationrRider.Models;
@@ -27,8 +27,8 @@ public class FilmsController : ControllerBase
             return NotFound();
 
         var allFilms = _dbContext.Films.Include("Genre").ToList();
-        var _filmsDtos = allFilms.Select(f => (FilmForOutputDTO)f);
-        return Ok(_filmsDtos);
+        var filmOutput = allFilms.Select(f => (FilmForOutputDTO?)f);
+        return Ok(filmOutput);
     }
 
     //GET: api/Films/2
@@ -41,18 +41,19 @@ public class FilmsController : ControllerBase
         if (film == null)
             return NotFound();
 
-        var _filmsDtos = (FilmForOutputDTO?)film;
+        var filmsOutput = (FilmForOutputDTO?)film;
        
 
 
-        return Ok(_filmsDtos);
+        return Ok(filmsOutput);
     }
 
     //POST: api/Films
     [HttpPost]
-    public async Task<ActionResult<FilmForOutputDTO>> CreateFilm(FilmSaveDTO UserData)
+    public async Task<ActionResult<FilmForOutputDTO>> CreateFilm(FilmSaveDTO userData)
     {
-        var genre = await _dbContext.Genres.FirstOrDefaultAsync(g => g.Name == UserData.GenreName);
+        // cerco il genere nel db
+        var genre = await _dbContext.Genres.FirstOrDefaultAsync(g => g.Name == userData.GenreName);
 
         if (genre == null)
         {
@@ -61,16 +62,16 @@ public class FilmsController : ControllerBase
 
         var newFilm = new Film
         {
-            Id = UserData.Id,
-            Title = UserData.Title,
-            ReleaseDate = UserData.ReleaseDate,
+            Id = userData.Id,
+            Title = userData.Title ?? string.Empty,
+            ReleaseDate = userData.ReleaseDate,
             Genre = genre
         };
 
         _dbContext.Add(newFilm);
         await _dbContext.SaveChangesAsync();
 
-        var output = (FilmForOutputDTO)newFilm;
+        var output = (FilmForOutputDTO?)newFilm;
         return Ok(output);
     }
 
@@ -84,7 +85,7 @@ public class FilmsController : ControllerBase
         if (film == null)
             return NotFound();
 
-        film.Title = userData.Title;
+        film.Title = userData.Title ?? string.Empty;
         film.ReleaseDate = userData.ReleaseDate;
 
         // controllo il valore del GenreName
@@ -105,7 +106,7 @@ public class FilmsController : ControllerBase
 
         await _dbContext.SaveChangesAsync();
 
-        var filmForOutputDTO = new FilmForOutputDTO
+        var filmForOutputDto = new FilmForOutputDTO
         {
             Id = film.Id,
             Title = film.Title,
@@ -113,21 +114,19 @@ public class FilmsController : ControllerBase
             GenreName = film.Genre?.Name ?? string.Empty
         };
 
-        return Ok(filmForOutputDTO);
+        return Ok(filmForOutputDto);
     }
 
     // //DELETE: api/Films/2
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteFilm(int id)
     {
-        if (_dbContext == null) return NotFound(OperationResult.NOK());
-
         var film = await _dbContext.Films.FindAsync(id);
-        if (film == null) return NotFound();
+        if (film == null) return Ok(OperationResult.NOK("Film inesistente => Id sbagliato"));
 
         _dbContext.Films.Remove(film);
         await _dbContext.SaveChangesAsync();
-        return NoContent();
+        return Ok(OperationResult.OK());
     }
     
 }

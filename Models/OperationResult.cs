@@ -1,4 +1,6 @@
-﻿namespace WebApplicationrRider.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace WebApplicationrRider.Models;
 
 public class OperationResult
 {
