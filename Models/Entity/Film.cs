@@ -17,7 +17,7 @@ public class Film
     public Genre? Genre { get; set; }
     
     //relation with EaringSale one-to-one
-    public EarningSale EarningSale { get; set; }
+    public EarningSale? EarningSale { get; set; }
     
     
 

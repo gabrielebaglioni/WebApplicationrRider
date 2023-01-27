@@ -21,26 +21,20 @@ public class FilmSaveDto
     [DataType(DataType.Date, ErrorMessage = "Invalid date format")]
     [DateLessThanOrEqualToToday]
     
-    public int PriceSingleSale { get; set; }
+    public int TotalEarning { get; set; }
     
-    public int SaleAmount { get; set; }
-    
-    public int TotalEaring { get; set; }
+    //public int TotalEaring { get; set; }
     public DateTime ReleaseDate { get; set; }
 
     
 
-    public static explicit operator FilmSaveDto(Film entity)
+    public static explicit operator Film(FilmSaveDto dto)
     {
-        return new FilmSaveDto
+        return new Film
         {
-            Id = entity.Id,
-            Title = entity.Title,
-            GenreName = entity.Genre?.Name,
-            ReleaseDate = entity.ReleaseDate,
-            PriceSingleSale = entity.EarningSale.PriceSingleSale,
-            SaleAmount = entity.EarningSale.SaleAmount,
-            TotalEaring = entity.EarningSale.PriceSingleSale * entity.EarningSale.SaleAmount
+            Id = dto.Id,
+            Title = dto.Title ?? string.Empty,
+            ReleaseDate = dto.ReleaseDate,
         };
     }
     

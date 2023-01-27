@@ -15,7 +15,7 @@ public class EarningSaleOutputDto
             return new EarningSaleOutputDto
             {
                 Id = entity.Id,
-                TotalEaring = entity.PriceSingleSale * entity.SaleAmount
+                TotalEaring = entity.TotalEarning
             };
         }
     }

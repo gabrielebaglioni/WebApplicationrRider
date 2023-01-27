@@ -11,7 +11,7 @@ public class FilmOutputDto
 
     public string? GenreName { get; set; }
 
-    public int TotalEaring { get; set; }
+    public int TotalEarning { get; set; }
 
     public DateTime ReleaseDate { get; set; }
 
@@ -24,7 +24,7 @@ public class FilmOutputDto
             dto.Id = entity.Id;
             dto.Title = entity.Title;
             dto.GenreName = entity.Genre?.Name ?? string.Empty;
-            dto.TotalEaring = entity.EarningSale.PriceSingleSale * entity.EarningSale.SaleAmount;
+            if (entity.EarningSale != null) dto.TotalEarning = entity.EarningSale.TotalEarning;
             dto.ReleaseDate = entity.ReleaseDate;
             return dto;
         }

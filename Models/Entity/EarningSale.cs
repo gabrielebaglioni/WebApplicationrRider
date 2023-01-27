@@ -6,9 +6,7 @@ public class EarningSale
     public int Id { get; set; }
    
     
-    public int PriceSingleSale { get; set; }
-    
-    public int SaleAmount { get; set; }
+    public int TotalEarning { get; set; }
     
     //relation with EaringSale one-to-one
     public int FkFilm { get; set; }

@@ -9,14 +9,14 @@ public class EarnigSaleSaveDto
     [Required] 
     public int Id { get; set; }
     
-    public int TotalEaring { get; set; }
+    public int TotalEarning { get; set; }
 
     public static explicit operator EarnigSaleSaveDto?(EarningSale entity)
     {
         return new EarnigSaleSaveDto
         {
             Id = entity.Id,
-            TotalEaring = entity.PriceSingleSale * entity.SaleAmount
+            TotalEarning = entity.TotalEarning
         };
     }
 }

@@ -8,7 +8,6 @@ public class GenreOutputDto
     
     public string? Name { get; set; }
     
-    public  List<Film>? Films { get; set; }
     
     public static explicit operator GenreOutputDto(Genre entity)
     {
