@@ -47,6 +47,19 @@ public class FilmsController : ControllerBase
 
         return Ok(filmsOutput);
     }
+    // GET: api/Genres/5
+    // GET ALL FILMS BY GENRE
+    [HttpGet("Genre{Name}")]
+    public async Task<ActionResult<List<FilmForOutputDTO>>> GetFilmsByGenre(string genreName)
+    {
+        var filmsByGenre = await _dbContext.Films
+            .Where(x => x.Genre.Name == genreName)
+            .ToListAsync();
+        var output = filmsByGenre.Select(f => (FilmForOutputDTO)f!);
+
+
+        return Ok(output);
+    }
 
     //POST: api/Films
     [HttpPost]
