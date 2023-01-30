@@ -1,64 +1,65 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationrRider.Models;
 using WebApplicationrRider.Models.DTOs.Incoming;
 using WebApplicationrRider.Models.DTOs.Outgoing;
+using WebApplicationrRider.Models.Entity;
 using WebApplicationrRider.Utils;
 
-namespace WebApplicationrRider.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class FilmsController : ControllerBase
+namespace WebApplicationrRider.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class FilmsController : ControllerBase
 {
     private readonly FilmContext _dbContext;
-    
+
 
     public FilmsController(FilmContext dbContext)
     {
         _dbContext = dbContext;
-        
     }
 
     // GET: api/Films
     [HttpGet]
-    public ActionResult<IEnumerable<FilmOutputDto>> GetFilms(string? genreName)
+    public async Task<ActionResult<IEnumerable<FilmOutputDto>>> GetFilms(string? genreName)
     {
         if (!_dbContext.Films.Any())
             return NotFound();
 
-        IEnumerable<Film>films  = _dbContext.Films.Include(f => f.Genre)
-            .Include(f=>f.EarningSale).AsQueryable();
-        if (!string.IsNullOrEmpty(genreName))
-        {
-            films = films.Where(x => x.Genre != null && x.Genre.Name == genreName);
-        }
 
+        IEnumerable<Film> films = await _dbContext.Films
+            .Include(f => f.Genre)
+            .Include(f => f.EarningSale)
+            .Include(f => f.ActorsFilm)!
+                .ThenInclude(af => af.Actor)
+            .ToListAsync();
+        if (!string.IsNullOrEmpty(genreName)) films = films.Where(x => x.Genre != null && x.Genre.Name == genreName);
         /*films = !string.IsNullOrEmpty(genreName)
-            ? films.Where(x => x.Genre != null && x.Genre.Name == genreName)
-            : films;*/
-        films = films.ToList();
-        
-        var outputs = films.Select(f => (FilmOutputDto?)f);
-        return Ok(outputs);
+           ? films.Where(x => x.Genre != null && x.Genre.Name == genreName)
+           : films;*/
+        var filmsOutput = films.Select(film => (FilmOutputDto)film).ToList();
+
+        return Ok(filmsOutput);
     }
+
 
     //GET: api/Films/2
     [HttpGet("{id}")]
     public ActionResult<FilmOutputDto> GetMovieById(int id)
     {
         var film = _dbContext.Films
-            .Include(f=>f.Genre)
-            .Include(f=>f.EarningSale)
+            .Include(f => f.Genre)
+            .Include(f => f.EarningSale)
+            .Include(f => f.ActorsFilm)!
+            .ThenInclude(af => af.Actor)
             .FirstOrDefault(x => x.Id == id);
-            
-            
+
+
         if (film == null)
             return NotFound();
 
         var filmsOutput = (FilmOutputDto?)film;
-       
 
 
         return Ok(filmsOutput);
@@ -66,47 +67,51 @@ namespace WebApplicationrRider.Controllers
 
     //POST: api/Films
     [HttpPost]
-    public async Task<ActionResult<FilmOutputDto>> CreateFilm(FilmSaveDto filmSaveDto)
+    public async Task<IActionResult> CreateFilm([FromBody] FilmSaveDto filmSaveDto)
     {
-        if (_dbContext.Films.Any(f=>f.Title == filmSaveDto.Title))
-        {
-            return BadRequest(OperationResult.NOK("Titolo esistente"));
-        }
+        // Check if a film with the same title already exists
+        
+        if ( await _dbContext.Films.AnyAsync(f => f.Title == filmSaveDto.Title))
+            return BadRequest(OperationResult.NOK("A film with the same title already exists."));
 
-        // Cerco il genere nel db
-        var genre = await _dbContext.Genres.FirstOrDefaultAsync(g => g.Name == filmSaveDto.GenreName);
+        // Create a new Film object
+        
+// Check if the genre exists in the database
+        var genre = await _dbContext.Genres
+            .FirstOrDefaultAsync(g => g.Name == filmSaveDto.GenreName);
 
         if (genre == null)
         {
-            return BadRequest("Invalid genre name");
+            return BadRequest(OperationResult.NOK("genere non esisiset"));
         }
-
-        var newFilm = (Film)filmSaveDto;
-        newFilm.Genre = genre;
-
-        // Creo un nuovo EarningSale per il nuovo film
-        var newEarningSale = new EarningSale
+        var film = new Film
         {
-            TotalEarning = filmSaveDto.TotalEarning,
-          
+            Title = filmSaveDto.Title,
+            ReleaseDate = filmSaveDto.ReleaseDate
         };
 
-        // Imposto il nuovo EarningSale per il nuovo film
-        newFilm.EarningSale = newEarningSale;
-
-        _dbContext.Add(newFilm);
+        film.Genre = genre;
+        var actors = await _dbContext.Actor
+            .Where(e => filmSaveDto.Actors.Any(dto => dto.Name == e.Name && dto.Surname == e.Surname))
+            .ToListAsync();
+        foreach (var actor in actors)
+        {
+            film.AddActor(actor);
+        }
+        //actors.ForEach(actor => {film.AddActor(actor);});
+        await _dbContext.Films.AddAsync(film);
         await _dbContext.SaveChangesAsync();
 
-        var output = (FilmOutputDto?)newFilm;
+
+        FilmOutputDto output = (FilmOutputDto)film;
+
         return Ok(output);
     }
 
 
-
-
     // //PUT:api/Films/3
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateFilm(int id, [FromBody] FilmSaveDto filmSaveDto)
+    public async Task<IActionResult> UpdateFilm(int id, /*[FromBody]*/ FilmSaveDto filmSaveDto)
     {
         var film = await _dbContext.Films.FindAsync(id);
         if (film == null)
@@ -118,7 +123,6 @@ namespace WebApplicationrRider.Controllers
         {
             earningsSale = new EarningSale
             {
-                Id = film.Id,
                 TotalEarning = filmSaveDto.TotalEarning
             };
             _dbContext.EarningSales.Add(earningsSale);
@@ -128,11 +132,11 @@ namespace WebApplicationrRider.Controllers
             earningsSale.TotalEarning = filmSaveDto.TotalEarning;
         }
 
-        if (filmSaveDto.Title != film.Title && _dbContext.Films.Any(f=>f.Title == filmSaveDto.Title && f.Id!= filmSaveDto.Id))
-        {
+        if (filmSaveDto.Title != film.Title &&
+            _dbContext.Films.Any(f => f.Title == filmSaveDto.Title && f.Id != filmSaveDto.Id))
             return BadRequest(OperationResult.NOK("Titolo esistente"));
-        }
-        Genre? genre = null;
+
+        Genre genre = null;
         // controllo il valore del GenreName
         if (filmSaveDto.GenreName != film.Genre?.Name)
         {
@@ -148,8 +152,8 @@ namespace WebApplicationrRider.Controllers
 
         await _dbContext.SaveChangesAsync();
 
-   
-        var filmForOutputDto = new FilmOutputDto
+
+        var filmOutput = new FilmOutputDto
         {
             Id = film.Id,
             Title = film.Title,
@@ -158,9 +162,8 @@ namespace WebApplicationrRider.Controllers
             ReleaseDate = film.ReleaseDate
         };
 
-        return Ok(filmForOutputDto);
+        return Ok(filmOutput);
     }
-
 
 
     // //DELETE: api/Films/2
@@ -174,6 +177,4 @@ namespace WebApplicationrRider.Controllers
         await _dbContext.SaveChangesAsync();
         return Ok(OperationResult.OK());
     }
-    
-}
 }

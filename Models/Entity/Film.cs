@@ -1,10 +1,12 @@
-﻿namespace WebApplicationrRider.Models
+﻿using WebApplicationrRider.Models.Entity;
+
+namespace WebApplicationrRider.Models
 {
     public class Film
     {
         public int Id { get; set; }
 
-        public string? Title { get; set; }
+        public string Title { get; set; }
         
         public DateTime ReleaseDate { get; set; }
         
@@ -16,11 +18,23 @@
         //relation with EaringSale one-to-one
         public EarningSale ? EarningSale { get; set; }
 
+        public ICollection<ActorFilm> ActorsFilm { get; set; } = new List<ActorFilm>();
+
         public DateTime DateAdded { get; set; }
 
         public DateTime DateUpdated { get; set; }
 
         public DateTime DateDelete { get; set; }
-        
+
+        public void AddActor(Actor actor)
+        {
+           this.ActorsFilm.Add( new ActorFilm
+           {
+               FkActor = actor.Id,
+               FkFilm = this.Id,
+               Actor = actor,
+               Film = this
+           });
+        }
     }
 }

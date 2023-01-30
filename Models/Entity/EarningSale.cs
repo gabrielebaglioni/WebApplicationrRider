@@ -2,6 +2,8 @@ namespace WebApplicationrRider.Models;
 
 public class EarningSale
 {
+    
+    
     public int Id { get; set; }
    
     
