@@ -5,7 +5,8 @@ namespace WebApplicationrRider.Models.DTOs.Incoming;
 
 public class FilmSaveDto
 {
-    [Required] [Key] public int Id { get; set; }
+    [Required] 
+    public int Id { get; set; }
 
     [Required(ErrorMessage = "You have to insert the title")]
     [StringLength(40)]
@@ -23,7 +24,7 @@ public class FilmSaveDto
     
     public int TotalEarning { get; set; }
     
-    //public int TotalEaring { get; set; }
+    public ICollection<ActorDto> Actors { get; set; } = new List<ActorDto>();
     public DateTime ReleaseDate { get; set; }
 
     
@@ -35,6 +36,7 @@ public class FilmSaveDto
             Id = dto.Id,
             Title = dto.Title ?? string.Empty,
             ReleaseDate = dto.ReleaseDate,
+            EarningSale = new EarningSale { TotalEarning = dto.TotalEarning }
         };
     }
     

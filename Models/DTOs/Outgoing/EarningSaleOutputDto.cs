@@ -4,7 +4,6 @@ using WebApplicationrRider.Models.Entity;
 namespace WebApplicationrRider.Models.DTOs.Outgoing;
 public class EarningSaleOutputDto
     {
-        [Key]
         [Required] 
         public int Id { get; set; }
     

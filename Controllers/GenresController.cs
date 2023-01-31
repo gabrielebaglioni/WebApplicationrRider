@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationrRider.Models;
+using WebApplicationrRider.Models.Context;
 using WebApplicationrRider.Models.DTOs.Incoming;
 using WebApplicationrRider.Models.DTOs.Outgoing;
 
@@ -97,6 +98,7 @@ public class GenresController : ControllerBase
 
         _dbContext.Genres.Remove(genre);
         await _dbContext.SaveChangesAsync();
-        return Ok(OperationResult.OK());
+        return Ok(OperationResult.OK("Genere Eliminato con successo"));; 
+     
     }
 }

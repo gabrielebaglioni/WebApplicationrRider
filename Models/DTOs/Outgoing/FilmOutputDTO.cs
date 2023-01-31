@@ -15,20 +15,22 @@ public class FilmOutputDto
 
     public DateTime ReleaseDate { get; set; }
 
-
-    public static explicit operator FilmOutputDto(Film? entity)
+    public ICollection<ActorOutputDto> Actors { get; set; } = new List<ActorOutputDto>();
+    public static explicit operator FilmOutputDto(Film entity)
     {
-        if (entity != null)
-        {
-            var dto = new FilmOutputDto();
+        var dto = new FilmOutputDto();
             dto.Id = entity.Id;
             dto.Title = entity.Title;
             dto.GenreName = entity.Genre?.Name ?? string.Empty;
             if (entity.EarningSale != null) dto.TotalEarning = entity.EarningSale.TotalEarning;
             dto.ReleaseDate = entity.ReleaseDate;
+            
+            foreach (var actorFilm in entity.ActorsFilm)
+            {
+                if (actorFilm.Actor == null) continue;
+                    var actorDto = (ActorOutputDto)actorFilm.Actor;
+                    dto.Actors.Add(actorDto);
+            }
             return dto;
         }
-
-        throw new InvalidOperationException("Entità Film null => Errore");
-    }
 }

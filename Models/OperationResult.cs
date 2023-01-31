@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplicationrRider.Models.DTOs.Outgoing;
 
 namespace WebApplicationrRider.Models;
 
@@ -16,7 +17,7 @@ public class OperationResult
     public bool Ok { get; set; }
     public string? Message { get; set; }
 
-    public static OperationResult OK(string? message = null)
+    public static OperationResult OK( string? message = null)
     {
         return new(true, string.IsNullOrEmpty(message) ? OkMessage : message);
     }
