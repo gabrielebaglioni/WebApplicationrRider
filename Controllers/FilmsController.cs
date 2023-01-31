@@ -69,14 +69,8 @@ public class FilmsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateFilm([FromBody] FilmSaveDto filmSaveDto)
     {
-        // Check if a film with the same title already exists
-        
         if ( await _dbContext.Films.AnyAsync(f => f.Title == filmSaveDto.Title))
             return BadRequest(OperationResult.NOK("A film with the same title already exists."));
-
-        // Create a new Film object
-        
-// Check if the genre exists in the database
         var genre = await _dbContext.Genres
             .FirstOrDefaultAsync(g => g.Name == filmSaveDto.GenreName);
 
@@ -91,9 +85,18 @@ public class FilmsController : ControllerBase
         };
 
         film.Genre = genre;
-        var actors = await _dbContext.Actor
+        // Creo un nuovo EarningSale per il nuovo film
+        var newEarningSale = new EarningSale
+        {
+            TotalEarning = filmSaveDto.TotalEarning,
+          
+        };
+        film.EarningSale = newEarningSale;
+
+        var actors =  _dbContext.Actor.AsEnumerable()
             .Where(e => filmSaveDto.Actors.Any(dto => dto.Name == e.Name && dto.Surname == e.Surname))
-            .ToListAsync();
+            .AsEnumerable();
+        
         foreach (var actor in actors)
         {
             film.AddActor(actor);
@@ -101,8 +104,7 @@ public class FilmsController : ControllerBase
         //actors.ForEach(actor => {film.AddActor(actor);});
         await _dbContext.Films.AddAsync(film);
         await _dbContext.SaveChangesAsync();
-
-
+        
         FilmOutputDto output = (FilmOutputDto)film;
 
         return Ok(output);
