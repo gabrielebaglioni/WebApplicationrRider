@@ -31,24 +31,24 @@ public class FilmContext : DbContext
                 .WithMany(g => g.Films)
                 .HasForeignKey(f => f.FkGenre)
                 .HasPrincipalKey(g => g.Id);
-            entityBuilder.HasOne<EarningSale>(f => f.EarningSale)
-                .WithOne(es => es.Film)
-                .HasForeignKey<EarningSale>(es => es.FkFilm)
-                .OnDelete(DeleteBehavior.Cascade);
-            entityBuilder.HasMany<ActorFilm>(f => f.ActorsFilm)
+            // entityBuilder.HasOne<EarningSale>(f => f.EarningSale)
+            //     .WithOne(es => es.Film)
+            //     .HasForeignKey<EarningSale>(es => es.FkFilm);
+            // .OnDelete(DeleteBehavior.Cascade);
+            /*entityBuilder.HasMany<ActorFilm>(f => f.ActorsFilm)
                 .WithOne(af => af.Film)
-                .HasForeignKey(af => af.FkFilm)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(af => af.FkFilm);*/
+            //.OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<Actor>(entityBuilder =>
         {
             entityBuilder.HasKey(x => x.Id);
-            entityBuilder.HasIndex(u => u.Surname).IsUnique();
-            entityBuilder.HasMany<ActorFilm>(a => a.FilmsActor)
+            //entityBuilder.HasIndex(u => u.Surname).IsUnique();
+            /*entityBuilder.HasMany<ActorFilm>(a => a.FilmsActor)
                 .WithOne(af => af.Actor)
-                .HasForeignKey(af => af.FkActor)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(af => af.FkActor);*/
+               // .OnDelete(DeleteBehavior.Cascade);
             entityBuilder.Property(x => x.Id)
                 .UseIdentityColumn();
         });
@@ -59,11 +59,10 @@ public class FilmContext : DbContext
             entityBuilder.HasOne<Actor>(af => af.Actor)
                 .WithMany(a => a.FilmsActor)
                 .HasForeignKey(af => af.FkActor);
-            // .OnDelete(DeleteBehavior.Cascade);
             entityBuilder.HasOne<Film>(af => af.Film)
                 .WithMany(f => f.ActorsFilm)
                 .HasForeignKey(af => af.FkFilm);
-            //.OnDelete(DeleteBehavior.Cascade);
+
         });
 
         builder.Entity<EarningSale>(entityBuilder =>
@@ -71,8 +70,8 @@ public class FilmContext : DbContext
             entityBuilder.HasKey(x => x.Id);
             entityBuilder.HasOne<Film>(es => es.Film)
                 .WithOne(f => f.EarningSale)
-                .HasForeignKey<EarningSale>(es => es.FkFilm)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey<EarningSale>(es => es.FkFilm);
+                // .OnDelete(DeleteBehavior.Cascade);
             entityBuilder.Property(x => x.Id)
                 .UseIdentityColumn();
         });

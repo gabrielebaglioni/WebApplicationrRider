@@ -7,4 +7,6 @@ public class ActorFilm
     
     public int FkFilm { get; set; }
     public Film? Film { get; set; }
+
+    
 }

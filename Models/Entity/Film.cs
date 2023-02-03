@@ -1,4 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using WebApplicationrRider.Models.DTOs;
+using WebApplicationrRider.Models.DTOs.Incoming;
 
 namespace WebApplicationrRider.Models.Entity;
 
@@ -38,15 +40,52 @@ public class Film
             Film = this
         });
     }
+    
 
-    public void RemoveActor(Actor actor)
+    public void DeleteAllActors()
     {
-        this.ActorsFilm.Remove(new ActorFilm
-        {
-            FkActor = actor.Id,
-            FkFilm = this.Id,
-            Actor = actor,
-            Film = this
-        });
+        var actorsFilm = this.ActorsFilm.ToList();
+        actorsFilm.ForEach(x => this.ActorsFilm.Remove(x));
     }
+    
+    public void RemoveUnmatchedActors(List<ActorDto> actorsDto)
+    {
+        // Recuperare tutti i record di ActorFilm che non corrispondono agli attori presenti nella lista actorsDto
+        var actorsToRemove = ActorsFilm.Where(af => !actorsDto.Any(aDto => aDto.Id == af.FkActor)).ToList();
+
+        // Rimuovere i record di ActorFilm dalla lista ActorsFilm
+        foreach (var actorToRemove in actorsToRemove)
+        {
+            ActorsFilm.Remove(actorToRemove);
+        }
+    }
+
 }
+
+
+/*return Ok(OperationResult.NOK(
+    $"Actor not found in the database: Name: {actor.Name}, Surname: {actor.Surname}"));*/
+    
+/* if (film.ActorsFilm.Count != filmSaveDto.Actors.Count || film.ActorsFilm.Any(af => filmSaveDto.Actors.All(dto => dto.Id == af.FkActor)))
+        {
+            
+            film.DeleteAllActors();
+                var actors = _dbContext.Actor.AsEnumerable()
+                    .Where(e => filmSaveDto.Actors.Any(dto => dto.Name == e.Name && dto.Surname == e.Surname))
+                    .AsEnumerable();
+                foreach (var actor in actors)
+                {
+                    film.AddActor(actor);
+                }
+        }
+    */
+    
+/*public void RemoveActor(List<Actor?> actor)
+{
+    var actorFilm = this.ActorsFilm.FirstOrDefault(af => af.FkActor == actor.FirstOrDefault()?.Id);
+    if (actorFilm != null)
+    {
+        this.ActorsFilm.Remove(actorFilm);
+    }
+}*/
+//creo un ana funzione che rimuove tutti gli attori  che sono associati al film

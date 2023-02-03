@@ -24,7 +24,7 @@ public class FilmSaveDto
     
     public int TotalEarning { get; set; }
     
-    public ICollection<ActorDto> Actors { get; set; } = new List<ActorDto>();
+    public List<ActorDto> Actors { get; set; } = new List<ActorDto>();
     public DateTime ReleaseDate { get; set; }
 
     

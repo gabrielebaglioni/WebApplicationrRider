@@ -11,17 +11,19 @@ public class ActorSaveDto
 
     [Required(ErrorMessage = "You have to insert the name")]
     [StringLength(40)]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     [Required(ErrorMessage = "You have to insert the surname")]
     [StringLength(40)]
-    public string Surname { get; set; }
+    public string Surname { get; set; } = null!;
 
     [Required]
     [Display(Name = "Birthdate")]
     [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
     [DataType(DataType.Date, ErrorMessage = "Invalid date format")]
     public DateTime Birthdate { get; set; }
+    
+    public List<FilmSaveDto> Films { get; set; } = new List<FilmSaveDto>();
 
     public static explicit operator Actor(ActorSaveDto dto)
     {

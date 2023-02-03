@@ -28,8 +28,8 @@ public class FilmOutputDto
             foreach (var actorFilm in entity.ActorsFilm)
             {
                 if (actorFilm.Actor == null) continue;
-                    var actorDto = (ActorOutputDto)actorFilm.Actor;
-                    dto.Actors.Add(actorDto);
+                var actorDto = (ActorOutputDto)actorFilm.Actor;
+                dto.Actors.Add(actorDto);
             }
             return dto;
         }

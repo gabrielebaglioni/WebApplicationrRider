@@ -10,9 +10,9 @@ public class EarningSale
     
     //relation with EaringSale one-to-one
     public int FkFilm { get; set; }
-    public Film Film { get; set; }
-    
-    
+    public Film Film { get; set; } = null!;
+
+
     public DateTime DateAdded { get; set; }
 
     public DateTime DateUpdated { get; set; }

@@ -48,7 +48,7 @@ public class GenresController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<List<FilmOutputDto>>> PostGenre(GenreSaveDto userData)
     {
-        var genre = _dbContext.Genres.Any(genres => genres.Name.Equals(userData.Name));
+        var genre = _dbContext.Genres.Any(genres => genres.Name != null && genres.Name.Equals(userData.Name));
         if (genre)
             return BadRequest(OperationResult.NOK("Genere già Inesistente"));
         var newGenre = new Genre
@@ -67,7 +67,7 @@ public class GenresController : ControllerBase
     public async Task<ActionResult<GenreSaveDto>> PutGenre(int id, GenreSaveDto userData)
     {
         var genre = await _dbContext.Genres.FindAsync(id);
-        var checkGenreName = _dbContext.Genres.Any(g => g.Name.Equals(userData.Name));
+        var checkGenreName = _dbContext.Genres.Any(g => g.Name != null && g.Name.Equals(userData.Name));
         if (genre != null && genre.Id != userData.Id) return NotFound(OperationResult.NOK("id diverso"));
         if (genre != null)
         {

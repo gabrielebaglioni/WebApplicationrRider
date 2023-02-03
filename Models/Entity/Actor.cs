@@ -5,11 +5,11 @@ public class Actor
     
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public DateTime Birthdate { get; set; }
         
-    public  string Surname { get; set; }
+    public  string Surname { get; set; } = null!;
 
     public ICollection<ActorFilm> FilmsActor { get; set; } = new List<ActorFilm>();
         
