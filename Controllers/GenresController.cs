@@ -1,104 +1,83 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebApplicationrRider.Models;
-using WebApplicationrRider.Models.Context;
-using WebApplicationrRider.Models.DTOs.Incoming;
-using WebApplicationrRider.Models.DTOs.Outgoing;
+using WebApplicationrRider.Controllers.Support;
+using WebApplicationrRider.Domain.Comunication.OperationResults;
+using WebApplicationrRider.Domain.Exceptions;
+using WebApplicationrRider.Domain.Models.DTOs.Incoming;
+using WebApplicationrRider.Domain.Models.DTOs.Outgoing;
+using WebApplicationrRider.Domain.Services;
 
 namespace WebApplicationrRider.Controllers;
 
+
 [Route("api/[controller]")]
 [ApiController]
-public class GenresController : ControllerBase
+public class GenresController : BaseController
 {
-    private readonly FilmContext _dbContext;
+    private readonly IGenreService _genreService;
 
 
-    public GenresController(FilmContext dbContext)
+    public GenresController(IGenreService genreService)
     {
-        _dbContext = dbContext;
+        _genreService = genreService;
     }
 
     //GET: api/Genres
     [HttpGet]
-    public ActionResult<IEnumerable<GenreSaveDto>> GetAllGenres()
+    public async Task<ActionResult> GetAllGenres()
     {
-        var allGenre = _dbContext.Genres.ToList();
-        var genreOutput = allGenre.Select(g => (GenreSaveDto)g);
-        return Ok(genreOutput);
+        /*return await TryCatch(async () =>
+        {*/
+            var genres = await _genreService.GetListAsync();
+            return Ok(genres);
+        /*});*/
     }
 
-    
 
     //GET: api/Genres/5
     //GET A SINGLE GENRE BY ID
     [HttpGet("{id}")]
-    public ActionResult<GenreSaveDto> GetGenreById(int id)
+    public async Task<ActionResult<GenreOutputDto>> GetGenreById(int id)
     {
-        var genre = _dbContext.Genres
-            .FirstOrDefault(x => x.Id == id);
-        if (genre == null)
-            return NotFound();
-
-        var output = (GenreSaveDto)genre;
-        return Ok(output);
+        /*return await TryCatch(async () =>
+        {*/
+            var genre = await _genreService.Get(id);
+            return Ok(genre);
+        /*});*/
     }
 
     //POST: api/Genres
     [HttpPost]
-    public async Task<ActionResult<List<FilmOutputDto>>> PostGenre(GenreSaveDto userData)
-    {
-        var genre = _dbContext.Genres.Any(genres => genres.Name != null && genres.Name.Equals(userData.Name));
-        if (genre)
-            return BadRequest(OperationResult.NOK("Genere già Inesistente"));
-        var newGenre = new Genre
-        {
-            Id = userData.Id,
-            Name = userData.Name ?? string.Empty
-        };
-        _dbContext.Add(newGenre);
-        await _dbContext.SaveChangesAsync();
-        var output = (GenreSaveDto)newGenre;
-        return Ok(output);
-    }
+    public async Task<ActionResult<OperationResult>> PostGenre(GenreSaveDto genreSaveDto)
+         {
+             /*return await TryCatch(async ()  =>
+             {*/
+             var result = await _genreService.CreateAsync(genreSaveDto); 
+             return Ok(GenreSavingOperationResult.OK(result, "Genere aggiunto con successo nel database."));
+             /*});*/
+         }
+    
+   
 
     // //PUT: api/Genres/5
     [HttpPut("{id}")]
-    public async Task<ActionResult<GenreSaveDto>> PutGenre(int id, GenreSaveDto userData)
+    public async Task<ActionResult<OperationResult>> PutGenre(int id, GenreSaveDto genreSaveDto)
     {
-        var genre = await _dbContext.Genres.FindAsync(id);
-        var checkGenreName = _dbContext.Genres.Any(g => g.Name != null && g.Name.Equals(userData.Name));
-        if (genre != null && genre.Id != userData.Id) return NotFound(OperationResult.NOK("id diverso"));
-        if (genre != null)
-        {
-            genre.Id = userData.Id;
-
-            if (!checkGenreName)
-                genre.Name = userData.Name ?? string.Empty;
-        }
-
-        await _dbContext.SaveChangesAsync();
-
-
-        var newGenre = new GenreSaveDto
-        {
-            Id = userData.Id,
-            Name = userData.Name
-        };
-
-        return Ok(newGenre);
+        
+        /*return await TryCatch(async () =>
+        {*/
+            var result = await _genreService.UpdateAsync(id, genreSaveDto);
+            return Ok(GenreSavingOperationResult.OK(result, "Genere aggiornato con successo nel database."));
+        /*});*/
     }
 
     // //DELETE: api/Films/2
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteGenre(int id)
     {
-        var genre = await _dbContext.Genres.FindAsync(id);
-        if (genre == null) return NotFound();
-
-        _dbContext.Genres.Remove(genre);
-        await _dbContext.SaveChangesAsync();
-        return Ok(OperationResult.OK("Genere Eliminato con successo"));; 
-     
+        /*return await TryCatch(async () =>
+        {*/
+            var result = await _genreService.DeleteAsync(id);
+            return Ok(GenreSavingOperationResult.OK(result, "Genere eliminato con successo dal database."));
+        /*});*/
     }
 }
