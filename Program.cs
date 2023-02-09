@@ -21,6 +21,8 @@ public class Program
         // servizi e repository
         builder.Services.AddScoped<IFilmRepository, FilmRepository>();
         builder.Services.AddScoped<IFilmServices, FilmService>();
+        builder.Services.AddScoped<IActorRepository, ActorRepository>();
+        builder.Services.AddScoped<IActorService, ActorService>();
         builder.Services.AddScoped<IGenreRepository, GenreRepository>();
         builder.Services.AddScoped<IGenreService, GenreService>();
         builder.Services.AddControllers();

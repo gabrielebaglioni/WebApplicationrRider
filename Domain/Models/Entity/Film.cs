@@ -48,12 +48,5 @@ public class Film
         actorsFilm.ForEach(x => ActorsFilm.Remove(x));
     }
 
-    public void RemoveUnmatchedActors(List<ActorReferenceDto> actorsDto)
-    {
-        // Recuperare tutti i record di ActorFilm che non corrispondono agli attori presenti nella lista actorsDto
-        var actorsToRemove = ActorsFilm.Where(af => !actorsDto.Any(aDto => aDto.Id == af.FkActor)).ToList();
-
-        // Rimuovere i record di ActorFilm dalla lista ActorsFilm
-        foreach (var actorToRemove in actorsToRemove) ActorsFilm.Remove(actorToRemove);
-    }
+   
 }

@@ -11,7 +11,7 @@ public interface IFilmRepository
     Task AddAsync(Film film);
     Task UpdateAsync(Film film);
     Task DeleteAsync(Film film);
-    Task<IEnumerable<Actor>> GetActorsByNameAndSurnameAsync(IEnumerable<Actor?> actorDtos);
+    IEnumerable<Actor> GetActorsByNameAndSurname(IEnumerable<string?[]> nameSurnameList);
     Task<Genre?> GetGenreByNameAsync(string? name);
-    Task UpdateActorsAsync(Film existingFilm, IEnumerable<Actor?> actors);
+   
 }

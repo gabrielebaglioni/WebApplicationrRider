@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Newtonsoft.Json;
-using WebApplicationrRider.Domain.Comunication.OperationResults;
 using WebApplicationrRider.Domain.Exceptions;
 
 namespace WebApplicationrRider.MiddleWhere;

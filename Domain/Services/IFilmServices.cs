@@ -8,7 +8,7 @@ public interface IFilmServices
 {
     Task<IEnumerable<FilmOutputDto>> GetListAsync();
     Task<FilmOutputDto> Get(int id);
-    Task<FilmOutputDto> CreateAsync(FilmSaveDto genreSaveDto);
+    Task<FilmOutputDto> CreateAsync(FilmSaveDto filmSaveDto);
     Task<FilmOutputDto> UpdateAsync(int id, FilmSaveDto filmSaveDto);
     Task<FilmOutputDto> DeleteAsync(int id);
 }

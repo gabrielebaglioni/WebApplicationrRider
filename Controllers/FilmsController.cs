@@ -13,9 +13,9 @@ public class FilmsController : BaseController
 {
     private readonly IFilmServices _filmServices;
 
-    public FilmsController(IFilmServices _filmServices)
+    public FilmsController(IFilmServices filmServices)
     {
-        this._filmServices = _filmServices;
+        this._filmServices = filmServices;
     }
 
     // GET: api/Films
@@ -31,7 +31,7 @@ public class FilmsController : BaseController
 
     //GET: api/Films/2
     [HttpGet("{id}")]
-    public async Task<ActionResult<FilmOutputDto>> GetMovieById(int id)
+    public async Task<ActionResult<FilmOutputDto>> GetFilm(int id)
     {
         /*return await TryCatch( async () =>
         {*/
@@ -42,7 +42,7 @@ public class FilmsController : BaseController
 
     // //POST: api/Films
     [HttpPost]
-    public async Task<ActionResult<OperationResult>> PostFilm(FilmSaveDto filmSaveDto)
+    public async Task<ActionResult<OperationResult>> CreateFilm(FilmSaveDto filmSaveDto)
     {
         /*return await TryCatch(async () =>
         {*/

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebApplicationrRider.Domain.Exceptions;
 using WebApplicationrRider.Domain.Models.Entity;
 using WebApplicationrRider.Domain.Repositories;
 using WebApplicationrRider.Models;
@@ -54,11 +55,8 @@ public class FilmRepository : BaseRepository, IFilmRepository
         if (existingFilm == null) return;
 
         _DbContext.Entry(existingFilm).CurrentValues.SetValues(film);
-
-        if (film.ActorsFilm.Any())
-            await UpdateActorsAsync(existingFilm, film.ActorsFilm.Select(af => af.Actor));
-
         await _DbContext.SaveChangesAsync();
+        
     }
 
 
@@ -73,34 +71,13 @@ public class FilmRepository : BaseRepository, IFilmRepository
         return _DbContext.Genres.FirstOrDefaultAsync(g => g.Name == name);
     }
 
-    public Task<IEnumerable<Actor>> GetActorsByNameAndSurnameAsync(IEnumerable<Actor?> actorDtos)
+    public IEnumerable<Actor> GetActorsByNameAndSurname(IEnumerable<string?[]> nameSurnameList)
     {
-        return Task.FromResult(_DbContext.Actor.AsEnumerable()
-            .Where(e => actorDtos
-                .Any(dto => dto != null && dto.Name == e.Name && dto.Surname == e.Surname)));
+        return _DbContext.Actor.AsEnumerable()
+            .Where(e => nameSurnameList
+                .Any(a => a[0] == e.Name && a[1] == e.Surname));
     }
-
-
-    public async Task UpdateActorsAsync(Film film, IEnumerable<Actor?> actorDtos)
-    {
-        var actors = await GetActorsByNameAndSurnameAsync(actorDtos);
-        if(actors.Count()==0) 
-            film.ActorsFilm.Clear();
-        var notFoundActors = actorDtos
-            .Where(dto => !actors
-                .Any(a => dto != null && a.Name == dto.Name && a.Surname == dto.Surname))
-            .Select(dto => $"Nome: {dto!.Name}, Cognome: {dto.Surname}");
-        if (notFoundActors.Any())
-            throw new Exception(
-                $"Attenzione: alcuni attori non sono stati trovati nel database: {string.Join(", ", notFoundActors)}");
-
-        var existingFilm = await _DbContext.Films
-            .Include(f => f.ActorsFilm)
-            .FirstOrDefaultAsync(f => f.Id == film.Id);
-        if (existingFilm == null) return;
-
-        existingFilm.ActorsFilm.Clear();
-        foreach (var actor in actors) existingFilm.AddActor(actor);
-        await _DbContext.SaveChangesAsync();
-    }
+    
 }
+
+
