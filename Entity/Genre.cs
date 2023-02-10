@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApplicationrRider.Domain.Models.Entity;
+namespace WebApplicationrRider.Entity;
 
 public class Genre
 {

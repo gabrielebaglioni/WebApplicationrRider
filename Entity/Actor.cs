@@ -1,4 +1,4 @@
-﻿namespace WebApplicationrRider.Domain.Models.Entity;
+﻿namespace WebApplicationrRider.Entity;
 
 public class Actor
 {
@@ -34,4 +34,5 @@ public class Actor
         var filmsActor = FilmsActor.ToList();
         filmsActor.ForEach(x => FilmsActor.Remove(x));
     }
+
 }

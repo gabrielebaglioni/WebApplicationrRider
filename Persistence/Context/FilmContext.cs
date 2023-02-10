@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplicationrRider.Domain.Models.Entity;
+using WebApplicationrRider.Entity;
 
 namespace WebApplicationrRider.Models.Context;
 

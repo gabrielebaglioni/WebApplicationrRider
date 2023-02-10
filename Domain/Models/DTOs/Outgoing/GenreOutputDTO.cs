@@ -1,4 +1,4 @@
-﻿using WebApplicationrRider.Domain.Models.Entity;
+﻿using WebApplicationrRider.Entity;
 
 namespace WebApplicationrRider.Domain.Models.DTOs.Outgoing;
 

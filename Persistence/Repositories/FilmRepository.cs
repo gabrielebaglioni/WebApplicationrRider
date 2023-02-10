@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApplicationrRider.Domain.Exceptions;
-using WebApplicationrRider.Domain.Models.Entity;
 using WebApplicationrRider.Domain.Repositories;
+using WebApplicationrRider.Entity;
 using WebApplicationrRider.Models;
 using WebApplicationrRider.Models.Context;
 

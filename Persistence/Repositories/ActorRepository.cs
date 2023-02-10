@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplicationrRider.Domain.Models.Entity;
 using WebApplicationrRider.Domain.Repositories;
+using WebApplicationrRider.Entity;
 using WebApplicationrRider.Models.Context;
 
 namespace WebApplicationrRider.Persistence.Repositories;

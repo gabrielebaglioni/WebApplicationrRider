@@ -18,6 +18,7 @@ public class Program
         builder.Services.AddDbContext<FilmContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("FilmContext")));
         //----------------------------------------------------------------
+        builder.Services.AddCors();
         // servizi e repository
         builder.Services.AddScoped<IFilmRepository, FilmRepository>();
         builder.Services.AddScoped<IFilmServices, FilmService>();
@@ -25,6 +26,8 @@ public class Program
         builder.Services.AddScoped<IActorService, ActorService>();
         builder.Services.AddScoped<IGenreRepository, GenreRepository>();
         builder.Services.AddScoped<IGenreService, GenreService>();
+        builder.Services.AddScoped<IUserService, UserService >();
+        //builder.Services.AddControllers(option => option.Filters.Add(new AuthorizeAttribute()));
         builder.Services.AddControllers();
         // builder.Services.AddSingleton()
         // builder.Services.AddScoped()
@@ -52,9 +55,14 @@ public class Program
 
         app.UseHttpsRedirection();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-        app.UseAuthorization();
-
+        app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+        //app.UseAuthentication();
+        app.UseMiddleware<BasicAuthMiddleware>();
+        
+        
         app.MapControllers();
 
 

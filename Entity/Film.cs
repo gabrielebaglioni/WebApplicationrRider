@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WebApplicationrRider.Domain.Models.DTOs.References;
-using WebApplicationrRider.Models;
 
-namespace WebApplicationrRider.Domain.Models.Entity;
+namespace WebApplicationrRider.Entity;
 
 public class Film
 {

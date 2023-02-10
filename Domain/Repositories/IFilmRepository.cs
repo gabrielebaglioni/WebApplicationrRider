@@ -1,4 +1,4 @@
-﻿using WebApplicationrRider.Domain.Models.Entity;
+﻿using WebApplicationrRider.Entity;
 using WebApplicationrRider.Models;
 
 namespace WebApplicationrRider.Domain.Repositories;

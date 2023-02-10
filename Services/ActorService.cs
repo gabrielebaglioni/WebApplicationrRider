@@ -1,9 +1,9 @@
 ﻿using WebApplicationrRider.Domain.Exceptions;
 using WebApplicationrRider.Domain.Models.DTOs.Incoming;
 using WebApplicationrRider.Domain.Models.DTOs.Outgoing;
-using WebApplicationrRider.Domain.Models.Entity;
 using WebApplicationrRider.Domain.Repositories;
 using WebApplicationrRider.Domain.Services;
+using WebApplicationrRider.Entity;
 
 namespace WebApplicationrRider.Services;
 

@@ -1,5 +1,5 @@
 ﻿using WebApplicationrRider.Domain.Models.DTOs.References;
-using WebApplicationrRider.Domain.Models.Entity;
+using WebApplicationrRider.Entity;
 
 namespace WebApplicationrRider.Domain.Models.DTOs.Outgoing;
 

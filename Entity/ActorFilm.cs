@@ -1,4 +1,4 @@
-﻿namespace WebApplicationrRider.Domain.Models.Entity;
+﻿namespace WebApplicationrRider.Entity;
 
 public class ActorFilm
 {

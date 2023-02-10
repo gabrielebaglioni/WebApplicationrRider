@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WebApplicationrRider.Domain.Models.Entity;
+using WebApplicationrRider.Entity;
 
 namespace WebApplicationrRider.Domain.Models.DTOs.Incoming;
 
