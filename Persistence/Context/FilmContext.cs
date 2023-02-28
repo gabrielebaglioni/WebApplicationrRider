@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApplicationrRider.Entity;
 
-namespace WebApplicationrRider.Models.Context;
+namespace WebApplicationrRider.Persistence.Context;
 
 public class FilmContext : DbContext
 {
@@ -18,6 +18,9 @@ public class FilmContext : DbContext
 
 
     public DbSet<EarningSale> EarningSales { get; set; } = null!;
+
+    public DbSet<User> Users { get; set; } = null!;
+
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

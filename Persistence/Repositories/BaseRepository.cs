@@ -1,4 +1,4 @@
-﻿using WebApplicationrRider.Models.Context;
+﻿using WebApplicationrRider.Persistence.Context;
 
 namespace WebApplicationrRider.Persistence.Repositories;
 

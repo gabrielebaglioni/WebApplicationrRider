@@ -7,7 +7,7 @@ public class Genre
     [Key] public int Id { get; set; }
 
 
-    public string? Name { get; set; }
+    public string Name { get; set; }= null!;
 
     //[System.Text.Json.Serialization.JsonIgnore]
     public List<Film> Films { get; set; } = new();

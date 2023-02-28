@@ -17,7 +17,7 @@ public class Actor
     public DateTime DateUpdated { get; set; }
 
     public DateTime DateDelete { get; set; }
-    
+
     public void AddFilm(Film film)
     {
         FilmsActor.Add(new ActorFilm
@@ -28,11 +28,10 @@ public class Actor
             Film = film
         });
     }
-    
+
     public void DeleteAllFilms()
     {
         var filmsActor = FilmsActor.ToList();
         filmsActor.ForEach(x => FilmsActor.Remove(x));
     }
-
 }

@@ -1,5 +1,4 @@
-﻿using WebApplicationrRider.Domain.Comunication.OperationResults;
-using WebApplicationrRider.Domain.Models.DTOs.Incoming;
+﻿using WebApplicationrRider.Domain.Models.DTOs.Incoming;
 using WebApplicationrRider.Domain.Models.DTOs.Outgoing;
 
 namespace WebApplicationrRider.Domain.Services;

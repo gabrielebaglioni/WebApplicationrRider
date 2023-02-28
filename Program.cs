@@ -1,8 +1,10 @@
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationrRider.Domain.Repositories;
 using WebApplicationrRider.Domain.Services;
+using WebApplicationrRider.Helpers;
 using WebApplicationrRider.MiddleWhere;
-using WebApplicationrRider.Models.Context;
+using WebApplicationrRider.Persistence.Context;
 using WebApplicationrRider.Persistence.Repositories;
 using WebApplicationrRider.Services;
 
@@ -12,13 +14,21 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        Console.WriteLine(Dns.GetHostName()); 
         var builder = WebApplication.CreateBuilder(args);
+
 
         // Add services to the container.
         builder.Services.AddDbContext<FilmContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("FilmContext")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("FilmContext")), ServiceLifetime.Transient);
+        // //----------------------------------------------------------------
+
+
         //----------------------------------------------------------------
+
         builder.Services.AddCors();
+        builder.Services.AddControllers();
+        builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
         // servizi e repository
         builder.Services.AddScoped<IFilmRepository, FilmRepository>();
         builder.Services.AddScoped<IFilmServices, FilmService>();
@@ -26,9 +36,9 @@ public class Program
         builder.Services.AddScoped<IActorService, ActorService>();
         builder.Services.AddScoped<IGenreRepository, GenreRepository>();
         builder.Services.AddScoped<IGenreService, GenreService>();
-        builder.Services.AddScoped<IUserService, UserService >();
-        //builder.Services.AddControllers(option => option.Filters.Add(new AuthorizeAttribute()));
-        builder.Services.AddControllers();
+        builder.Services.AddTransient<IUserRepository, UserRepository>();
+        builder.Services.AddTransient<IUserService, UserService>();
+
         // builder.Services.AddSingleton()
         // builder.Services.AddScoped()
         // builder.Services.AddTransient()
@@ -45,27 +55,26 @@ public class Program
         // builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         var app = builder.Build();
-
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        
 
         app.UseHttpsRedirection();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
-        app.UseCors(x => x
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
-        //app.UseAuthentication();
-        app.UseMiddleware<BasicAuthMiddleware>();
-        
-        
+        app.UseCors(options =>
+        {
+            options.WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+
+        app.UseMiddleware<JwtMiddleware>();
+
         app.MapControllers();
-
-
         app.Run();
     }
 }

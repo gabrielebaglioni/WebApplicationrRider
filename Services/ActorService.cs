@@ -10,15 +10,18 @@ namespace WebApplicationrRider.Services;
 public class ActorService : IActorService
 {
     private readonly IActorRepository _actorRepository;
+
     public ActorService(IActorRepository actorRepository)
     {
         _actorRepository = actorRepository;
     }
+
     public async Task<IEnumerable<ActorOutputDto>> GetListAsync()
     {
         var actors = await _actorRepository.GetListAsync();
         return actors.Select(actor => (ActorOutputDto)actor);
     }
+
     public async Task<ActorOutputDto> Get(int id)
     {
         var actor = await _actorRepository.Get(id);
@@ -26,26 +29,25 @@ public class ActorService : IActorService
             throw new CheckException("l'attore non è stato trovato nel database.");
         return (ActorOutputDto)actor;
     }
-    
+
     public async Task<ActorOutputDto> CreateAsync(ActorSaveDto actorSaveDto)
     {
-        if(await _actorRepository.ExistsAsync(actorSaveDto.Name, actorSaveDto.Surname))
+        if (await _actorRepository.ExistsAsync(actorSaveDto.Name, actorSaveDto.Surname))
             throw new CheckException("L'attore esiste già nel database.");
-        var films = _actorRepository.GetFilmByTitleAsync(actorSaveDto.Films.Select(f => new[] {f?.Title})).ToList();
+        var films = _actorRepository.GetFilmByTitleAsync(actorSaveDto.Films.Select(f => new[] { f?.Title })).ToList();
         var notFoundFilm = actorSaveDto.Films
             .Where(dto => films.All(f => f.Title != dto?.Title))
             .Select(dto => $"Title: {dto.Title}");
-        if(notFoundFilm.Any())
-            throw new FilmTitleNotValidException(title: notFoundFilm.ToString());
+        if (notFoundFilm.Any())
+            throw new FilmTitleNotValidException(notFoundFilm.ToString());
         var actor = (Actor)actorSaveDto;
         foreach (var film in films)
             actor.AddFilm(film);
-        
+
         await _actorRepository.AddAsync(actor);
         return (ActorOutputDto)actor;
-
     }
-    
+
     public async Task<ActorOutputDto> UpdateAsync(int id, ActorSaveDto actorSaveDto)
     {
         var actor = await _actorRepository.Get(id);
@@ -56,17 +58,18 @@ public class ActorService : IActorService
                 throw new CheckException("L'attore esiste già nel database.");
         if (CheckChangesInToFilms(actorSaveDto, actor))
             actor.DeleteAllFilms();
-    {
-            var films = _actorRepository.GetFilmByTitleAsync(actorSaveDto.Films.Select(f => new[] {f?.Title})).ToList();
+        {
+            var films = _actorRepository.GetFilmByTitleAsync(actorSaveDto.Films.Select(f => new[] { f?.Title }))
+                .ToList();
             var notFoundFilm = actorSaveDto.Films
                 .Where(dto => films.All(f => f.Title != dto?.Title))
                 .Select(dto => $"Title: {dto.Title}");
-            if(notFoundFilm.Any())
-                throw new FilmTitleNotValidException(title: notFoundFilm.ToString());
+            if (notFoundFilm.Any())
+                throw new FilmTitleNotValidException(notFoundFilm.ToString());
             actor.FilmsActor.Clear();
             foreach (var film in films)
                 actor.AddFilm(film);
-    }
+        }
 
         await _actorRepository.UpdateAsync(actor);
         return (ActorOutputDto)actor;

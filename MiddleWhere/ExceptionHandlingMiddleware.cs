@@ -32,4 +32,4 @@ public class ExceptionHandlingMiddleware
             await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
         }
     }
-}   
+}

@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplicationrRider.Domain.Exceptions;
 using WebApplicationrRider.Domain.Repositories;
 using WebApplicationrRider.Entity;
-using WebApplicationrRider.Models;
-using WebApplicationrRider.Models.Context;
+using WebApplicationrRider.Persistence.Context;
 
 namespace WebApplicationrRider.Persistence.Repositories;
 
@@ -56,7 +54,6 @@ public class FilmRepository : BaseRepository, IFilmRepository
 
         _DbContext.Entry(existingFilm).CurrentValues.SetValues(film);
         await _DbContext.SaveChangesAsync();
-        
     }
 
 
@@ -77,7 +74,4 @@ public class FilmRepository : BaseRepository, IFilmRepository
             .Where(e => nameSurnameList
                 .Any(a => a[0] == e.Name && a[1] == e.Surname));
     }
-    
 }
-
-

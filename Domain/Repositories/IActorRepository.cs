@@ -10,5 +10,5 @@ public interface IActorRepository
     Task AddAsync(Actor actor);
     Task UpdateAsync(Actor actor);
     Task DeleteAsync(Actor id);
-    IEnumerable<Film>  GetFilmByTitleAsync(IEnumerable<string?[]> title);
+    IEnumerable<Film> GetFilmByTitleAsync(IEnumerable<string?[]> title);
 }

@@ -11,10 +11,12 @@ public class ActorSavingOperationResult : OperationResult<ActorOutputDto>
     ) : base(ok, message, result)
     {
     }
+
     public static ActorSavingOperationResult Okay(ActorOutputDto? result, string? message = null)
     {
         return new ActorSavingOperationResult(true, message, result);
     }
+
     public static ActorSavingOperationResult Nok(string? message = null)
     {
         return new ActorSavingOperationResult(false, message);

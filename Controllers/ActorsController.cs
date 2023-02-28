@@ -5,7 +5,6 @@ using WebApplicationrRider.Domain.Models.DTOs.Incoming;
 using WebApplicationrRider.Domain.Models.DTOs.Outgoing;
 using WebApplicationrRider.Domain.Services;
 
-
 namespace WebApplicationrRider.Controllers;
 
 [Route("api/[controller]")]
@@ -18,14 +17,14 @@ public class ActorsController : BaseController
     {
         _actorService = actorService;
     }
-    
-    
+
+
     // GET: api/Actors
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ActorOutputDto>>> GetActors()
     {
-       var actors = await _actorService.GetListAsync();
-         return Ok(actors);
+        var actors = await _actorService.GetListAsync();
+        return Ok(actors);
     }
 
     // GET: api/Actors/5

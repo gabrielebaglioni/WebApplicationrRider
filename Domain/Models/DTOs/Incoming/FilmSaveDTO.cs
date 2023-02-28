@@ -11,20 +11,20 @@ public class FilmSaveDto
     [StringLength(40)]
     public string Title { get; set; } = null!;
 
-    [Required(ErrorMessage = "You have to insert the title")]
+    [Required(ErrorMessage = "You have to insert the genre name")]
     [StringLength(40)]
-    public string? GenreName { get; set; }
+    public string GenreName { get; set; } = null!;
 
     [Required]
     [Display(Name = "Release Date")]
     [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
     [DataType(DataType.Date, ErrorMessage = "Invalid date format")]
     [DateLessThanOrEqualToToday]
-
+    public DateTime ReleaseDate { get; set; }
     public int TotalEarning { get; set; }
 
-    public IEnumerable<Actor?> Actors { get; set; } = new List<Actor?>();
-    public DateTime ReleaseDate { get; set; }
+    public IEnumerable<Actor> Actors { get; set; } = new List<Actor>();
+    
 
 
     public static explicit operator Film(FilmSaveDto dto)
@@ -32,9 +32,11 @@ public class FilmSaveDto
         return new Film
         {
             Id = dto.Id,
-            Title = dto.Title ?? string.Empty,
+            Title = dto.Title,
             ReleaseDate = dto.ReleaseDate,
-            EarningSale = new EarningSale { TotalEarning = dto.TotalEarning }
+            Genre = new Genre { Name = dto.GenreName },
+            EarningSale = new EarningSale { TotalEarning = dto.TotalEarning },
+            ActorsFilm = new List<ActorFilm>()
         };
     }
 

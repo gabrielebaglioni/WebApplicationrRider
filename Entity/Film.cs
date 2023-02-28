@@ -4,8 +4,7 @@ namespace WebApplicationrRider.Entity;
 
 public class Film
 {
-    [Key] 
-    public int Id { get; set; }
+    [Key] public int Id { get; set; }
 
     public string Title { get; set; } = null!;
 
@@ -45,6 +44,4 @@ public class Film
         var actorsFilm = ActorsFilm.ToList();
         actorsFilm.ForEach(x => ActorsFilm.Remove(x));
     }
-
-   
 }

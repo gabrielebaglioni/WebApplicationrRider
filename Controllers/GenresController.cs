@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplicationrRider.Controllers.Support;
 using WebApplicationrRider.Domain.Comunication.OperationResults;
-using WebApplicationrRider.Domain.Exceptions;
 using WebApplicationrRider.Domain.Models.DTOs.Incoming;
 using WebApplicationrRider.Domain.Models.DTOs.Outgoing;
 using WebApplicationrRider.Domain.Services;
 
 namespace WebApplicationrRider.Controllers;
-
 
 [Route("api/[controller]")]
 [ApiController]
@@ -27,8 +25,8 @@ public class GenresController : BaseController
     {
         /*return await TryCatch(async () =>
         {*/
-            var genres = await _genreService.GetListAsync();
-            return Ok(genres);
+        var genres = await _genreService.GetListAsync();
+        return Ok(genres);
         /*});*/
     }
 
@@ -40,33 +38,31 @@ public class GenresController : BaseController
     {
         /*return await TryCatch(async () =>
         {*/
-            var genre = await _genreService.Get(id);
-            return Ok(genre);
+        var genre = await _genreService.Get(id);
+        return Ok(genre);
         /*});*/
     }
 
     //POST: api/Genres
     [HttpPost]
     public async Task<ActionResult<OperationResult>> PostGenre(GenreSaveDto genreSaveDto)
-         {
-             /*return await TryCatch(async ()  =>
-             {*/
-             var result = await _genreService.CreateAsync(genreSaveDto); 
-             return Ok(GenreSavingOperationResult.OK(result, "Genere aggiunto con successo nel database."));
-             /*});*/
-         }
-    
-   
+    {
+        /*return await TryCatch(async ()  =>
+        {*/
+        var result = await _genreService.CreateAsync(genreSaveDto);
+        return Ok(GenreSavingOperationResult.OK(result, "Genere aggiunto con successo nel database."));
+        /*});*/
+    }
+
 
     // //PUT: api/Genres/5
     [HttpPut("{id}")]
     public async Task<ActionResult<OperationResult>> PutGenre(int id, GenreSaveDto genreSaveDto)
     {
-        
         /*return await TryCatch(async () =>
         {*/
-            var result = await _genreService.UpdateAsync(id, genreSaveDto);
-            return Ok(GenreSavingOperationResult.OK(result, "Genere aggiornato con successo nel database."));
+        var result = await _genreService.UpdateAsync(id, genreSaveDto);
+        return Ok(GenreSavingOperationResult.OK(result, "Genere aggiornato con successo nel database."));
         /*});*/
     }
 
@@ -76,8 +72,8 @@ public class GenresController : BaseController
     {
         /*return await TryCatch(async () =>
         {*/
-            var result = await _genreService.DeleteAsync(id);
-            return Ok(GenreSavingOperationResult.OK(result, "Genere eliminato con successo dal database."));
+        var result = await _genreService.DeleteAsync(id);
+        return Ok(GenreSavingOperationResult.OK(result, "Genere eliminato con successo dal database."));
         /*});*/
     }
 }

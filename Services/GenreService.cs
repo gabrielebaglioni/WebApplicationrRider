@@ -1,11 +1,9 @@
-﻿using WebApplicationrRider.Domain.Comunication.OperationResults;
-using WebApplicationrRider.Domain.Exceptions;
+﻿using WebApplicationrRider.Domain.Exceptions;
 using WebApplicationrRider.Domain.Models.DTOs.Incoming;
 using WebApplicationrRider.Domain.Models.DTOs.Outgoing;
 using WebApplicationrRider.Domain.Repositories;
 using WebApplicationrRider.Domain.Services;
 using WebApplicationrRider.Entity;
-using WebApplicationrRider.Models;
 
 namespace WebApplicationrRider.Services;
 
@@ -48,14 +46,15 @@ public class GenreService : IGenreService
     public async Task<GenreOutputDto> UpdateAsync(int id, GenreSaveDto genreSaveDto)
     {
         if (await _genreRepository.ExistsAsync(genreSaveDto.Name))
-                throw new CheckException("Il genere esiste già nel database.");
+            throw new CheckException("Il genere esiste già nel database.");
 
         var genre = (Genre)genreSaveDto;
         genre.Id = id;
-        await _genreRepository.UpdateAsync(genre); 
+        await _genreRepository.UpdateAsync(genre);
         var output = (GenreOutputDto)genre;
         return output;
     }
+
     public async Task<GenreOutputDto> DeleteAsync(int id)
     {
         var genre = await _genreRepository.Get(id);

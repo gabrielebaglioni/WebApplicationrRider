@@ -10,5 +10,4 @@ public interface IActorService
     Task<ActorOutputDto> CreateAsync(ActorSaveDto actorSaveDto);
     Task<ActorOutputDto> UpdateAsync(int id, ActorSaveDto actorSaveDto);
     Task<ActorOutputDto> DeleteAsync(int id);
-    
 }
