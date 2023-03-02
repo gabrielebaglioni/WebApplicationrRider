@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebApplicationrRider.Entity;
 
 namespace WebApplicationrRider.Persistence.Context;
 
-public class FilmContext : DbContext
+public class FilmContext : IdentityDbContext<IdentityUser>
 {
     public FilmContext(DbContextOptions<FilmContext> options)
         : base(options)
@@ -18,9 +20,6 @@ public class FilmContext : DbContext
 
 
     public DbSet<EarningSale> EarningSales { get; set; } = null!;
-
-    public DbSet<User> Users { get; set; } = null!;
-
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
