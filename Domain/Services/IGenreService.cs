@@ -13,4 +13,5 @@ public interface IGenreService
 
     Task<GenreOutputDto> UpdateAsync(int id, GenreSaveDto genreSaveDto);
     Task<GenreOutputDto> DeleteAsync(int id);
+    
 }

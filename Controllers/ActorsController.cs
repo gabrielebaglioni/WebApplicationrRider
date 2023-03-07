@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplicationrRider.Authorization;
 using WebApplicationrRider.Controllers.Support;
 using WebApplicationrRider.Domain.Comunication.OperationResults;
 using WebApplicationrRider.Domain.Models.DTOs.Incoming;
@@ -6,7 +7,6 @@ using WebApplicationrRider.Domain.Models.DTOs.Outgoing;
 using WebApplicationrRider.Domain.Services;
 
 namespace WebApplicationrRider.Controllers;
-
 [Route("api/[controller]")]
 [ApiController]
 public class ActorsController : BaseController

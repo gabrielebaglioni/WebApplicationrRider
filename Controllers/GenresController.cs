@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplicationrRider.Authorization;
 using WebApplicationrRider.Controllers.Support;
 using WebApplicationrRider.Domain.Comunication.OperationResults;
 using WebApplicationrRider.Domain.Models.DTOs.Incoming;

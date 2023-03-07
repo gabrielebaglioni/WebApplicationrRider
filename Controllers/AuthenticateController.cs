@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplicationrRider.Controllers.Support;
 using WebApplicationrRider.Domain.Services;
 using WebApplicationrRider.Entity;
-using WebApplicationrRider.Services;
+
 
 namespace WebApplicationrRider.Controllers
 {
@@ -12,7 +12,6 @@ namespace WebApplicationrRider.Controllers
     [ApiController]
     public class AuthenticateController : BaseController
     {
-        
         private readonly IAuthenticateService _authenticateService;
 
         public AuthenticateController(IAuthenticateService authenticateService)
@@ -69,6 +68,21 @@ namespace WebApplicationrRider.Controllers
             return Ok(new AuthenticateResponse { Status = "Success", Message = "User created successfully!" });
 
         }
+        [HttpGet("checkuser")]
+        public async Task<ActionResult<bool>> CheckIfUsernameExistsAsync(string username)
+        {
+            var userExists = await _authenticateService.CheckIfUsernameExistsAsync(username);
+
+            return Ok(new { exists = userExists });
+        }
+        [HttpGet("checkemail")]
+        public async Task<ActionResult<bool>> CheckIfEmailExistsAsync(string email)
+        {
+            var emailExists = await _authenticateService.CheckIfEmailExistsAsync(email);
+
+            return Ok(new { exists = emailExists });
+        }
+
 
     }
 }

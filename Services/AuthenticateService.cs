@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebApplicationrRider.Domain.Services;
 using WebApplicationrRider.Entity;
@@ -126,6 +127,18 @@ public class AuthenticateService : IAuthenticateService
             );
 
             return token;
+        }
+        public async Task<bool> CheckIfUsernameExistsAsync(string username )
+        {
+            var userExists = await _userManager.Users.AnyAsync(u => u.UserName == username );
+
+            return userExists;
+        }
+        public async Task<bool> CheckIfEmailExistsAsync(string email)
+        {
+            var emailExists = await _userManager.Users.AnyAsync(u => u.Email == email);
+
+            return emailExists;
         }
 
 }

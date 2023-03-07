@@ -18,9 +18,9 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine(Dns.GetHostName()); 
+        Console.WriteLine(Dns.GetHostName());
         var builder = WebApplication.CreateBuilder(args);
-        ConfigurationManager configuration= builder.Configuration;
+        ConfigurationManager configuration = builder.Configuration;
 
 
         // Add services to the container.
@@ -50,8 +50,8 @@ public class Program
 
         });
 
-        
-        
+
+
 
         //----------------------------------------------------------------
 
@@ -65,7 +65,9 @@ public class Program
         builder.Services.AddScoped<IActorService, ActorService>();
         builder.Services.AddScoped<IGenreRepository, GenreRepository>();
         builder.Services.AddScoped<IGenreService, GenreService>();
-        builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();        /*builder.Services.AddTransient<IUserRepository, UserRepository>();
+        builder.Services
+            .AddScoped<IAuthenticateService,
+                AuthenticateService>(); /*builder.Services.AddTransient<IUserRepository, UserRepository>();
         builder.Services.AddTransient<IUserService, UserService>();*/
 
         // builder.Services.AddSingleton()
@@ -73,7 +75,7 @@ public class Program
         // builder.Services.AddTransient()
 
 
-        
+
         // //----------------------------------------------------------------
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -85,15 +87,8 @@ public class Program
 
         var app = builder.Build();
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-        
 
         app.UseHttpsRedirection();
-        app.UseMiddleware<ExceptionHandlingMiddleware>();
         app.UseCors(options =>
         {
             options.WithOrigins("http://localhost:4200")
@@ -101,11 +96,20 @@ public class Program
                 .AllowAnyHeader();
         });
 
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
+
         app.UseAuthentication();
         app.UseAuthorization();
-        
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
 
         app.MapControllers();
+
         app.Run();
     }
+
 }
